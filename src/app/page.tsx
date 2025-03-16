@@ -25,7 +25,7 @@ export default function Presentation() {
   }, [currentSlide]);
 
   // Este é o useEffect para pré-carregamento dos slides
-  useEffect(() => {
+  /*useEffect(() => {
     // Função para pré-carregar todos os slides
     const preloadSlides = () => {
       // Esta lógica garante que todos os componentes de slide sejam inicializados
@@ -50,7 +50,7 @@ export default function Presentation() {
     
     preloadSlides();
   }, []); // Array vazio significa que este efeito roda apenas uma vez na montagem
-
+*/
   const goToSlide = (slideNumber: number) => {
     if (slideNumber > 0 && slideNumber <= totalSlides) {
       setCurrentSlide(slideNumber);

@@ -1,19 +1,20 @@
 // src/components/slides/Slide1.tsx
 import React from 'react';
-import SlideLayout from '../SlideLayout';
+import styles from './Slide1.module.css';
 
 const Slide1: React.FC = () => {
   return (
-    <SlideLayout 
-      title="Apresentação com Next.js" 
-      subtitle="Criando slides modernos para suas apresentações"
-    >
-      <ul className="list-disc space-y-6 pl-6">
-        <li>Feito com Next.js e Tailwind CSS</li>
-        <li>Navegação entre slides com teclado</li>
-        <li>Compatível com dispositivos móveis</li>
-      </ul>
-    </SlideLayout>
+    <div className={styles.container}>
+      <h1 className={styles.title}>Apresentação com Next.js</h1>
+      <h2 className={styles.subtitle}>Criando slides modernos para suas apresentações</h2>
+      <div className={styles.content}>
+        <ul className={styles.list}>
+          <li className={styles.listItem}>Feito com Next.js e Tailwind CSS</li>
+          <li className={styles.listItem}>Navegação entre slides com teclado</li>
+          <li className={styles.listItem}>Compatível com dispositivos móveis</li>
+        </ul>
+      </div>
+    </div>
   );
 };
 

@@ -1,5 +1,5 @@
 // src/components/Navigation.tsx
-import React from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 interface NavigationProps {
@@ -9,6 +9,7 @@ interface NavigationProps {
 
 const Navigation: React.FC<NavigationProps> = ({ totalSlides, currentSlide }) => {
   const router = useRouter();
+  const [isHovered, setIsHovered] = useState(false);
 
   const goToSlide = (slideNumber: number) => {
     if (slideNumber > 0 && slideNumber <= totalSlides) {
@@ -26,14 +27,16 @@ const Navigation: React.FC<NavigationProps> = ({ totalSlides, currentSlide }) =>
 
   return (
     <div 
-      className="fixed bottom-4 right-4 flex gap-4 bg-black bg-opacity-30 p-4 rounded-lg" 
+      className={`fixed bottom-4 right-4 flex gap-4 bg-black p-4 rounded-lg transition-opacity duration-300 ${isHovered ? 'opacity-100' : 'opacity-5'}`}
       onKeyDown={handleKeyDown}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       tabIndex={0}
     >
       <button 
         onClick={() => goToSlide(currentSlide - 1)}
         disabled={currentSlide === 1}
-        className="px-4 py-2 bg-white text-black rounded-lg disabled:opacity-50"
+        className="px-4 py-2 bg-white text-black rounded-lg disabled:opacity-80"
       >
         Anterior
       </button>
@@ -43,7 +46,7 @@ const Navigation: React.FC<NavigationProps> = ({ totalSlides, currentSlide }) =>
       <button 
         onClick={() => goToSlide(currentSlide + 1)}
         disabled={currentSlide === totalSlides}
-        className="px-4 py-2 bg-white text-black rounded-lg disabled:opacity-50"
+        className="px-4 py-2 bg-white text-black rounded-lg disabled:opacity-80"
       >
         Próximo
       </button>

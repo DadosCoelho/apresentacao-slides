@@ -8,6 +8,7 @@ import Slide3 from '@/components/slides/Slide3';
 
 export default function Presentation() {
   const [currentSlide, setCurrentSlide] = useState<number>(1);
+  const [isNavHovered, setIsNavHovered] = useState(false);
   const totalSlides = 3;
 
   // Este é o useEffect para navegação com teclado
@@ -24,33 +25,6 @@ export default function Presentation() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [currentSlide]);
 
-  // Este é o useEffect para pré-carregamento dos slides
-  /*useEffect(() => {
-    // Função para pré-carregar todos os slides
-    const preloadSlides = () => {
-      // Esta lógica garante que todos os componentes de slide sejam inicializados
-      // mesmo que não estejam visíveis ainda
-      const slides = [<Slide1 key="1" />, <Slide2 key="2" />, <Slide3 key="3" />];
-      
-      // Criar um container invisível para renderizar temporariamente os slides
-      const preloadDiv = document.createElement('div');
-      preloadDiv.style.position = 'absolute';
-      preloadDiv.style.opacity = '0';
-      preloadDiv.style.pointerEvents = 'none';
-      preloadDiv.style.visibility = 'hidden';
-      document.body.appendChild(preloadDiv);
-      
-      // Removemos o container após um segundo
-      setTimeout(() => {
-        if (document.body.contains(preloadDiv)) {
-          document.body.removeChild(preloadDiv);
-        }
-      }, 1000);
-    };
-    
-    preloadSlides();
-  }, []); // Array vazio significa que este efeito roda apenas uma vez na montagem
-*/
   const goToSlide = (slideNumber: number) => {
     if (slideNumber > 0 && slideNumber <= totalSlides) {
       setCurrentSlide(slideNumber);
@@ -70,11 +44,15 @@ export default function Presentation() {
     <div className="presentation">
       {renderSlide()}
       
-      <div className="fixed bottom-4 right-4 flex gap-4 bg-black bg-opacity-30 p-4 rounded-lg">
+      <div 
+        className={`fixed bottom-4 right-4 flex gap-4  bg-opacity-100 p-4 rounded-lg transition-opacity duration-300 ${isNavHovered ? 'opacity-30' : 'opacity-3'}`}
+        onMouseEnter={() => setIsNavHovered(true)}
+        onMouseLeave={() => setIsNavHovered(false)}
+      >
         <button 
           onClick={() => goToSlide(currentSlide - 1)}
           disabled={currentSlide === 1}
-          className="px-4 py-2 bg-white text-black rounded-lg disabled:opacity-50"
+          className="px-4 py-2 bg-white text-black rounded-lg disabled:opacity-30"
         >
           Anterior
         </button>
@@ -84,7 +62,7 @@ export default function Presentation() {
         <button 
           onClick={() => goToSlide(currentSlide + 1)}
           disabled={currentSlide === totalSlides}
-          className="px-4 py-2 bg-white text-black rounded-lg disabled:opacity-50"
+          className="px-4 py-2 bg-white text-black rounded-lg disabled:opacity-30"
         >
           Próximo
         </button>

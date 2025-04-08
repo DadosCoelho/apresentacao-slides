@@ -33,7 +33,6 @@ const SlidePage = () => {
         totalSlides={totalSlides} 
         currentSlide={slideId} 
         onNavigate={(slideNumber: number) => {
-          // Implement navigation logic here
           console.log(`Navigating to slide ${slideNumber}`);
         }} 
       />

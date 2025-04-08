@@ -1,47 +1,92 @@
 /* src/components/slides/Slide2.module.css */
 .container {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 100vh;
-    background-color: rgb(4, 120, 87);
-    color: white;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100vh;
+  background-color: rgb(4, 120, 87);
+  color: white;
+  padding: 2rem;
+}
+
+@media (min-width: 768px) {
+  .container {
     padding: 4rem;
+    height: 100vh;
   }
-  
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+@media (min-width: 768px) {
   .title {
     font-size: 3.75rem;
-    font-weight: 700;
     margin-bottom: 2rem;
-    text-align: center;
   }
-  
+}
+
+.content {
+  font-size: 1.25rem;
+}
+
+@media (min-width: 768px) {
   .content {
     font-size: 1.875rem;
   }
-  
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
   .grid {
-    display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 2rem;
-    width: 100%;
   }
-  
+}
+
+.card {
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 768px) {
   .card {
-    background-color: rgba(255, 255, 255, 0.2);
     padding: 2rem;
-    border-radius: 0.5rem;
+    margin-bottom: 0;
   }
-  
+}
+
+.cardTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: black;
+}
+
+.cardText {
+  font-size: 1.125rem;
+  color: black;
+}
+
+@media (min-width: 768px) {
   .cardTitle {
     font-size: 2.25rem;
-    font-weight: 700;
     margin-bottom: 1rem;
-    color: black;
   }
   
   .cardText {
     font-size: 1.5rem;
-    color: black;
   }
-  
+}

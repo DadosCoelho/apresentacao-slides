@@ -1,39 +1,78 @@
 /* src/components/slides/Slide3.module.css */
 .container {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 100vh;
-    background-color: rgb(107, 33, 168);
-    color: white;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 100vh;
+  background-color: rgb(107, 33, 168);
+  color: white;
+  padding: 2rem;
+}
+
+@media (min-width: 768px) {
+  .container {
     padding: 4rem;
+    height: 100vh;
   }
-  
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+@media (min-width: 768px) {
   .title {
     font-size: 3.75rem;
-    font-weight: 700;
     margin-bottom: 2rem;
-    text-align: center;
   }
-  
+}
+
+.content {
+  font-size: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (min-width: 768px) {
   .content {
     font-size: 1.875rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
   }
-  
+}
+
+.thanksText {
+  font-size: 1.75rem;
+  font-weight: 300;
+}
+
+@media (min-width: 768px) {
   .thanksText {
     font-size: 2.25rem;
-    font-weight: 300;
   }
-  
+}
+
+.contactInfo {
+  font-size: 1.25rem;
+  margin-top: 1.5rem;
+}
+
+@media (min-width: 768px) {
   .contactInfo {
     font-size: 1.875rem;
     margin-top: 2rem;
   }
-  
+}
+
+.contactItem {
+  margin-bottom: 0.75rem;
+}
+
+@media (min-width: 768px) {
   .contactItem {
     margin-bottom: 1rem;
   }
+}

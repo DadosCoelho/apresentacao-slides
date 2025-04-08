@@ -29,7 +29,14 @@ const SlidePage = () => {
   return (
     <div className="relative">
       {renderSlide()}
-      <Navigation totalSlides={totalSlides} currentSlide={slideId} />
+      <Navigation 
+        totalSlides={totalSlides} 
+        currentSlide={slideId} 
+        onNavigate={(slideNumber: number) => {
+          // Implement navigation logic here
+          console.log(`Navigating to slide ${slideNumber}`);
+        }} 
+      />
     </div>
   );
 };

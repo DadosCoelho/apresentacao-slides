@@ -1,4 +1,6 @@
 // src/components/slides/Slide0/Slide0.tsx
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import styles from './Slide0.module.css';
 import { useRouter } from 'next/navigation';
@@ -8,52 +10,41 @@ const Slide0: React.FC = () => {
   const [error, setError] = useState('');
   const [showPasswordField, setShowPasswordField] = useState(false);
   const router = useRouter();
-  const correctPassword = 'D@ados';
-  const kickPassword = 'sair';
 
-  useEffect(() => {
-    const existingPresenter = localStorage.getItem('presenterId');
-    if (existingPresenter && localStorage.getItem('isPresenter') !== 'true') {
-      setError('Já existe um apresentador ativo. Use a senha oculta para expulsá-lo.');
-    }
-  }, []);
-
-  const handlePresenterClick = (e: React.FormEvent) => {
+  const handlePresenterClick = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!showPasswordField) {
       setShowPasswordField(true);
       return;
     }
 
-    const existingPresenter = localStorage.getItem('presenterId');
-    console.log('Senha digitada:', password); // Log para depuração
-    console.log('Presenter existente:', existingPresenter);
+    try {
+      const response = await fetch('/api/presenter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
+      });
 
-    if (password === kickPassword) {
-      localStorage.removeItem('isPresenter');
-      localStorage.removeItem('presenterId');
-      localStorage.removeItem('currentPresenterSlide');
-      setError('Apresentador expulso! Você pode entrar como apresentador agora.');
-      setPassword('');
-      setShowPasswordField(false);
-      console.log('Apresentador expulso');
-      return;
-    }
+      const data = await response.json();
 
-    if (password === correctPassword) {
-      if (existingPresenter && localStorage.getItem('isPresenter') !== 'true') {
-        setError('Já existe um apresentador ativo. Use a senha oculta para expulsá-lo.');
-        return;
+      if (response.ok) {
+        if (data.message === 'Apresentador expulso') {
+          setError('Apresentador expulso! Você pode entrar como apresentador agora.');
+          setPassword('');
+          setShowPasswordField(false);
+        } else {
+          // Autenticado com sucesso
+          localStorage.setItem('isPresenter', 'true'); // Mantemos localmente para controle do cliente
+          localStorage.setItem('presenterId', data.presenterId);
+          router.push('/slide/1');
+        }
+      } else {
+        setError(data.error || 'Erro ao autenticar');
       }
-      const presenterId = crypto.randomUUID();
-      localStorage.setItem('isPresenter', 'true');
-      localStorage.setItem('presenterId', presenterId);
-      localStorage.setItem('currentPresenterSlide', '1');
-      console.log('Autenticado como apresentador:', { isPresenter: localStorage.getItem('isPresenter'), presenterId });
-      router.push('/slide/1');
-    } else {
-      setError('Senha incorreta!');
+    } catch (err) {
+      setError('Erro ao conectar com o servidor');
+      console.error(err);
     }
   };
 
@@ -79,10 +70,7 @@ const Slide0: React.FC = () => {
             autoFocus
           />
         )}
-        <button
-          type="submit"
-          className="p-2 bg-white text-black rounded w-60"
-        >
+        <button type="submit" className="p-2 bg-white text-black rounded w-60">
           {showPasswordField ? 'Entrar' : 'Apresentador'}
         </button>
         <button

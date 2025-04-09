@@ -20,21 +20,23 @@ const SlidePage = () => {
   const [presenterSlide, setPresenterSlide] = useState(0);
 
   useEffect(() => {
-    const presenterStatus = localStorage.getItem('isPresenter') === 'true';
-    const spectatorStatus = localStorage.getItem('isSpectator') === 'true';
-    setIsPresenter(presenterStatus);
-    setIsSpectator(spectatorStatus);
-    setPresenterSlide(parseInt(localStorage.getItem('currentPresenterSlide') || '0'));
-    console.log('Estado inicial:', { isPresenter, isSpectator, presenterSlide, slideId });
+    const fetchPresenterStatus = async () => {
+      const response = await fetch('/api/presenter');
+      const data = await response.json();
+      const localIsPresenter = localStorage.getItem('isPresenter') === 'true';
+      const localIsSpectator = localStorage.getItem('isSpectator') === 'true';
+      setIsPresenter(localIsPresenter && data.presenterId !== null); // Só é apresentador se local e API confirmarem
+      setIsSpectator(localIsSpectator);
+      setPresenterSlide(data.currentSlide);
+    };
+    fetchPresenterStatus();
   }, []);
 
   useEffect(() => {
     if (!isPresenter && !isSpectator && slideId !== 0) {
-      console.log('Redirecionando para Slide 0: Não autenticado');
       router.replace('/slide/0');
     }
     if (isSpectator && slideId > presenterSlide) {
-      console.log('Redirecionando espectador para:', presenterSlide);
       router.replace(`/slide/${presenterSlide}`);
     }
   }, [isPresenter, isSpectator, slideId, presenterSlide, router]);
@@ -62,25 +64,29 @@ const SlidePage = () => {
     }
   };
 
-  const handleNavigate = (slideNumber: number) => {
+  const handleNavigate = async (slideNumber: number) => {
     if (isPresenter && slideNumber >= 0 && slideNumber <= totalSlides) {
-      localStorage.setItem('currentPresenterSlide', slideNumber.toString());
-      setPresenterSlide(slideNumber);
-      console.log('Navegando para slide:', slideNumber);
-      router.push(`/slide/${slideNumber}`);
-    } else {
-      console.log('Navegação bloqueada:', { isPresenter, slideNumber });
+      try {
+        const response = await fetch('/api/presenter', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password: 'D@ados' }), // Revalida a senha para manter o estado
+        });
+        const data = await response.json();
+        if (response.ok) {
+          setPresenterSlide(slideNumber);
+          router.push(`/slide/${slideNumber}`);
+        }
+      } catch (err) {
+        console.error('Erro ao navegar:', err);
+      }
     }
   };
 
   return (
     <div className="relative">
       {renderSlide()}
-      <Navigation
-        totalSlides={totalSlides}
-        currentSlide={slideId}
-        onNavigate={handleNavigate}
-      />
+      <Navigation totalSlides={totalSlides} currentSlide={slideId} onNavigate={handleNavigate} />
     </div>
   );
 };

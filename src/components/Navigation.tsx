@@ -16,15 +16,23 @@ const Navigation: React.FC<NavigationProps> = ({ totalSlides, currentSlide, onNa
   const router = useRouter();
 
   useEffect(() => {
-    const presenterStatus = localStorage.getItem('isPresenter') === 'true';
-    // Removemos isSpectator pois não é necessário aqui, apenas isPresenter controla a navegação
-    setIsPresenter(presenterStatus);
+    const fetchPresenterStatus = async () => {
+      const response = await fetch('/api/presenter');
+      const data = await response.json();
+      const localIsPresenter = localStorage.getItem('isPresenter') === 'true';
+      setIsPresenter(localIsPresenter && data.presenterId !== null);
+    };
+    fetchPresenterStatus();
   }, []);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await fetch('/api/presenter', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: 'sair' }),
+    });
     localStorage.removeItem('isPresenter');
     localStorage.removeItem('presenterId');
-    localStorage.removeItem('currentPresenterSlide');
     setIsPresenter(false);
     router.push('/slide/0');
   };

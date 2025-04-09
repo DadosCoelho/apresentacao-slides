@@ -1,7 +1,8 @@
 // src/components/slides/Slide0/Slide0.tsx
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import Image from 'next/image'; // Importa o componente Image
 import styles from './Slide0.module.css';
 import { useRouter } from 'next/navigation';
 
@@ -34,9 +35,8 @@ const Slide0: React.FC = () => {
           setPassword('');
           setShowPasswordField(false);
         } else {
-          // Autenticado com sucesso
-          localStorage.setItem('isPresenter', 'true'); // Mantemos localmente para controle do cliente
-          localStorage.setItem('presenterId', data.presenterId);
+          localStorage.setItem('isPresenter', 'true');
+          localStorage.setItem('presenterId', data.presenterId); // Usa data.presenterId
           router.push('/slide/1');
         }
       } else {
@@ -57,7 +57,13 @@ const Slide0: React.FC = () => {
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>Apresentação</h1>
-      <img src="/QRCodeApresentacao.png" alt="QR Code" className={styles.qrCode} />
+      <Image
+        src="/QRCodeApresentacao.png"
+        alt="QR Code"
+        width={300} // Define a largura
+        height={300} // Define a altura (ajuste conforme necessário)
+        className={styles.qrCode}
+      />
       <h2 className={styles.subtitle}>Criando slides modernos para suas apresentações</h2>
       <form onSubmit={handlePresenterClick} className="mt-4 flex items-center justify-center gap-2">
         {showPasswordField && (

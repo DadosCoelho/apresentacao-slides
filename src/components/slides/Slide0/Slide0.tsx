@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import Image from 'next/image'; // Importa o componente Image
+import Image from 'next/image';
 import styles from './Slide0.module.css';
 import { useRouter } from 'next/navigation';
 
@@ -36,10 +36,11 @@ const Slide0: React.FC = () => {
           setShowPasswordField(false);
         } else {
           localStorage.setItem('isPresenter', 'true');
-          localStorage.setItem('presenterId', data.presenterId); // Usa data.presenterId
+          localStorage.setItem('presenterId', data.presenterId);
           router.push('/slide/1');
         }
       } else {
+        // Garante que data.error seja usado
         setError(data.error || 'Erro ao autenticar');
       }
     } catch (err) {
@@ -60,8 +61,8 @@ const Slide0: React.FC = () => {
       <Image
         src="/QRCodeApresentacao.png"
         alt="QR Code"
-        width={300} // Define a largura
-        height={300} // Define a altura (ajuste conforme necessário)
+        width={300}
+        height={300}
         className={styles.qrCode}
       />
       <h2 className={styles.subtitle}>Criando slides modernos para suas apresentações</h2>

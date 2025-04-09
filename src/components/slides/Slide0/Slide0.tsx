@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 const Slide0: React.FC = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [showPasswordField, setShowPasswordField] = useState(false); // Controla a visibilidade do campo de senha
   const router = useRouter();
   const correctPassword = 'D@ados';
   const kickPassword = 'sair'; // Senha oculta para expulsar o apresentador
@@ -17,8 +18,16 @@ const Slide0: React.FC = () => {
     }
   }, []);
 
-  const handlePresenterSubmit = (e: React.FormEvent) => {
+  const handlePresenterClick = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Se o campo de senha não está visível, apenas mostra o campo
+    if (!showPasswordField) {
+      setShowPasswordField(true);
+      return;
+    }
+
+    // Se o campo está visível, processa a senha
     const existingPresenter = localStorage.getItem('presenterId');
 
     // Senha oculta para expulsar o apresentador
@@ -27,7 +36,8 @@ const Slide0: React.FC = () => {
       localStorage.removeItem('presenterId');
       localStorage.removeItem('currentPresenterSlide');
       setError('Apresentador expulso! Você pode entrar como apresentador agora.');
-      setPassword(''); // Limpa o campo
+      setPassword('');
+      setShowPasswordField(false); // Esconde o campo após expulsão
       return;
     }
 
@@ -58,24 +68,27 @@ const Slide0: React.FC = () => {
       <h1 className={styles.title}>Apresentação</h1>
       <img src="/QRCodeApresentacao.png" alt="QR Code" className={styles.qrCode} />
       <h2 className={styles.subtitle}>Criando slides modernos para suas apresentações</h2>
-      <form onSubmit={handlePresenterSubmit} className="mt-4 flex items-center justify-center gap-2">
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Senha do apresentador"
-          className="p-2 rounded text-black"
-        />
+      <form onSubmit={handlePresenterClick} className="mt-4 flex items-center justify-center gap-2">
+        {showPasswordField && (
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Senha do apresentador"
+            className="p-2 rounded text-black"
+            autoFocus
+          />
+        )}
         <button
           type="submit"
-          className="p-2 bg-white text-black rounded w-60" // Define largura fixa para consistência
+          className="p-2 bg-white text-black rounded w-40"
         >
-          Entrar como Apresentador
+          {showPasswordField ? 'Entrar' : 'Apresentador'}
         </button>
         <button
           type="button"
           onClick={handleSpectatorAccess}
-          className="p-2 bg-blue-500 text-white rounded w-60" // Mesma largura do botão de entrar
+          className="p-2 bg-blue-500 text-white rounded w-40"
         >
           Acessar como Espectador
         </button>

@@ -58,6 +58,7 @@ export default function Home() {
   if (isMobile) {
     return (
       <div className="mobile-presentation">
+        <div id="slide-0"><Slide0 /></div>
         <div id="slide-1"><Slide1 /></div>
         <div id="slide-2"><Slide2 /></div>
         <div id="slide-3"><Slide3 /></div>

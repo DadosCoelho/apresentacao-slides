@@ -1,4 +1,4 @@
-/* src/components/slides/Slide1.module.css */
+/* src/components/slides/Slide0/Slide0.module.css */
 .container {
   display: flex;
   flex-direction: column;
@@ -65,4 +65,10 @@
     margin-top: 1.5rem;
     margin-bottom: 1.5rem;
   }
+}
+
+.qrCode {
+  width: 300px; /* Ajuste o tamanho desejado */
+  height: auto; /* Mantém a proporção da imagem */
+  margin: 0 auto; /* Centraliza a imagem */
 }

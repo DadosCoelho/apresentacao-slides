@@ -1,4 +1,4 @@
-// src/components/slides/Slide1.tsx
+// src/components/slides/Slide1/Slide1.tsx
 import React from 'react';
 import styles from './Slide1.module.css';
 

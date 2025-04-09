@@ -12,14 +12,14 @@ const Navigation: React.FC<NavigationProps> = ({ totalSlides, currentSlide, onNa
 
   return (
     <div 
-      className={`fixed bottom-4 right-4 flex gap-4 bg-black bg-opacity-70 p-4 rounded-lg transition-opacity duration-300 ${isHovered ? 'opacity-100' : 'opacity-30'}`}
+      className={`fixed bottom-4 right-4 flex gap-4 bg-black bg-opacity-70 p-4 rounded-lg transition-opacity duration-300 ${isHovered ? 'opacity-10' : 'opacity-2'}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       tabIndex={0}
     >
       <button 
         onClick={() => onNavigate(currentSlide - 1)}
-        disabled={currentSlide === 1}
+        disabled={currentSlide === 0}
         className="px-4 py-2 bg-white text-black rounded-lg disabled:opacity-50"
       >
         Anterior

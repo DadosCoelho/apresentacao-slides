@@ -13,14 +13,12 @@ interface NavigationProps {
 const Navigation: React.FC<NavigationProps> = ({ totalSlides, currentSlide, onNavigate }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isPresenter, setIsPresenter] = useState(false);
-  const [isSpectator, setIsSpectator] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
     const presenterStatus = localStorage.getItem('isPresenter') === 'true';
-    const spectatorStatus = localStorage.getItem('isSpectator') === 'true';
+    // Removemos isSpectator pois não é necessário aqui, apenas isPresenter controla a navegação
     setIsPresenter(presenterStatus);
-    setIsSpectator(spectatorStatus);
   }, []);
 
   const handleLogout = () => {

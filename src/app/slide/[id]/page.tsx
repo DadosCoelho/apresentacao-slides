@@ -21,10 +21,9 @@ const SlidePage = () => {
 
   useEffect(() => {
     const presenterStatus = localStorage.getItem('isPresenter') === 'true';
-    const spectatorStatus = localStorage.getItem('isSpectator') === 'true';
+    const spectatorStatus = localStorage.getItem('isSpectator') === 'true'; // eslint-disable-line @typescript-eslint/no-unused-vars
     setIsPresenter(presenterStatus);
     setIsSpectator(spectatorStatus);
-    setPresenterSlide(parseInt(localStorage.getItem('currentPresenterSlide') || '0'));
   }, []);
 
   useEffect(() => {

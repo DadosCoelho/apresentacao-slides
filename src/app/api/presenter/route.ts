@@ -10,16 +10,15 @@ export async function GET() {
 
 export async function POST(request: Request) {
   const { password } = await request.json();
+  if (password === 'sair') {
+    presenterId = null;
+    currentSlide = 0;
+    return NextResponse.json({ message: 'Apresentador expulso' });
+  }
   if (password === 'D@ados' && !presenterId) {
     presenterId = crypto.randomUUID();
     currentSlide = 1;
     return NextResponse.json({ presenterId, currentSlide });
   }
   return NextResponse.json({ error: 'Senha incorreta ou apresentador já existe' }, { status: 403 });
-}
-
-export async function DELETE() {
-  presenterId = null;
-  currentSlide = 0;
-  return NextResponse.json({ message: 'Apresentador expulso' });
 }

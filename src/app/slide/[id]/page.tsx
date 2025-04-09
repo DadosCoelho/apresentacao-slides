@@ -16,30 +16,36 @@ const SlidePage = () => {
   const totalSlides = 3;
 
   const [isPresenter, setIsPresenter] = useState(false);
+  const [isSpectator, setIsSpectator] = useState(false);
   const [presenterSlide, setPresenterSlide] = useState(0);
 
   useEffect(() => {
     const presenterStatus = localStorage.getItem('isPresenter') === 'true';
+    const spectatorStatus = localStorage.getItem('isSpectator') === 'true';
     setIsPresenter(presenterStatus);
+    setIsSpectator(spectatorStatus);
     setPresenterSlide(parseInt(localStorage.getItem('currentPresenterSlide') || '0'));
   }, []);
 
   useEffect(() => {
-    if (!isPresenter && slideId !== 0) {
+    // Se não for apresentador nem espectador, redireciona para Slide 0
+    if (!isPresenter && !isSpectator && slideId !== 0) {
       router.replace('/slide/0');
     }
-  }, [isPresenter, slideId, router]);
+    // Se for espectador e tentar acessar além do presenterSlide, redireciona para o presenterSlide
+    if (isSpectator && slideId > presenterSlide) {
+      router.replace(`/slide/${presenterSlide}`);
+    }
+  }, [isPresenter, isSpectator, slideId, presenterSlide, router]);
 
-  if (!isPresenter && slideId !== 0) {
+  // Bloqueia qualquer slide além do 0 se não for autenticado como apresentador ou espectador
+  if (!isPresenter && !isSpectator && slideId !== 0) {
     return null;
   }
 
-  if (!isPresenter && slideId > presenterSlide) {
-    return (
-      <div className="flex items-center justify-center h-screen text-white bg-gray-800">
-        <h1 className="text-2xl">Aguarde o apresentador avançar para este slide!</h1>
-      </div>
-    );
+  // Restringe espectadores a slides futuros
+  if (isSpectator && slideId > presenterSlide) {
+    return null; // Será redirecionado pelo useEffect
   }
 
   const renderSlide = () => {

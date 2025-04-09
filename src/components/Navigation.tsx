@@ -13,18 +13,22 @@ interface NavigationProps {
 const Navigation: React.FC<NavigationProps> = ({ totalSlides, currentSlide, onNavigate }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isPresenter, setIsPresenter] = useState(false);
+  const [isSpectator, setIsSpectator] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
     const presenterStatus = localStorage.getItem('isPresenter') === 'true';
+    const spectatorStatus = localStorage.getItem('isSpectator') === 'true';
     setIsPresenter(presenterStatus);
+    setIsSpectator(spectatorStatus);
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('isPresenter');
+    localStorage.removeItem('presenterId');
     localStorage.removeItem('currentPresenterSlide');
     setIsPresenter(false);
-    router.push('/slide/0'); // Redireciona para o Slide 0 após logout
+    router.push('/slide/0');
   };
 
   return (

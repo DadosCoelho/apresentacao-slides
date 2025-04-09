@@ -27,7 +27,7 @@ const Slide0: React.FC = () => {
         body: JSON.stringify({ password }),
       });
 
-      // Suprime o erro de lint para essa linha específica
+      // Garante que o ESLint reconheça o uso de data com supressão correta
       const data = await response.json(); // eslint-disable-next-line @typescript-eslint/no-unused-vars
 
       if (response.ok) {

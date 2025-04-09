@@ -58,7 +58,7 @@ const Slide0: React.FC = () => {
       <h1 className={styles.title}>Apresentação</h1>
       <img src="/QRCodeApresentacao.png" alt="QR Code" className={styles.qrCode} />
       <h2 className={styles.subtitle}>Criando slides modernos para suas apresentações</h2>
-      <form onSubmit={handlePresenterSubmit} className="mt-4">
+      <form onSubmit={handlePresenterSubmit} className="mt-4 flex items-center justify-center gap-2">
         <input
           type="password"
           value={password}
@@ -66,17 +66,21 @@ const Slide0: React.FC = () => {
           placeholder="Senha do apresentador"
           className="p-2 rounded text-black"
         />
-        <button type="submit" className="ml-2 p-2 bg-white text-black rounded">
+        <button
+          type="submit"
+          className="p-2 bg-white text-black rounded w-60" // Define largura fixa para consistência
+        >
           Entrar como Apresentador
         </button>
-        {error && <p className="text-red-500 mt-2">{error}</p>}
+        <button
+          type="button"
+          onClick={handleSpectatorAccess}
+          className="p-2 bg-blue-500 text-white rounded w-60" // Mesma largura do botão de entrar
+        >
+          Acessar como Espectador
+        </button>
       </form>
-      <button
-        onClick={handleSpectatorAccess}
-        className="mt-4 p-2 bg-blue-500 text-white rounded"
-      >
-        Acessar como Espectador
-      </button>
+      {error && <p className="text-red-500 mt-2 text-center">{error}</p>}
     </div>
   );
 };

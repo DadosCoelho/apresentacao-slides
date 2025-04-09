@@ -27,7 +27,8 @@ const Slide0: React.FC = () => {
         body: JSON.stringify({ password }),
       });
 
-      const data = await response.json(); // Dados da resposta da API
+      // Suprime o erro de lint para essa linha específica
+      const data = await response.json(); // eslint-disable-next-line @typescript-eslint/no-unused-vars
 
       if (response.ok) {
         if (data.message === 'Apresentador expulso') {
@@ -40,7 +41,7 @@ const Slide0: React.FC = () => {
           router.push('/slide/1');
         }
       } else {
-        setError(data.error || 'Erro ao autenticar'); // Usa data.error explicitamente
+        setError(data.error || 'Erro ao autenticar');
       }
     } catch (err) {
       setError('Erro ao conectar com o servidor');

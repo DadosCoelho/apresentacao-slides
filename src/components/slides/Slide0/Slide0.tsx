@@ -27,7 +27,7 @@ const Slide0: React.FC = () => {
         body: JSON.stringify({ password }),
       });
 
-      const data = await response.json();
+      const data = await response.json(); // Dados da resposta da API
 
       if (response.ok) {
         if (data.message === 'Apresentador expulso') {
@@ -40,8 +40,7 @@ const Slide0: React.FC = () => {
           router.push('/slide/1');
         }
       } else {
-        // Garante que data.error seja usado
-        setError(data.error || 'Erro ao autenticar');
+        setError(data.error || 'Erro ao autenticar'); // Usa data.error explicitamente
       }
     } catch (err) {
       setError('Erro ao conectar com o servidor');

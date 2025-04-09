@@ -80,10 +80,6 @@ export default function Home() {
 }
 
 
-// Atualização dos estilos dos componentes de slide
-
-
-
 
 
 

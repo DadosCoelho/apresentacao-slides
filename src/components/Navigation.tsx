@@ -2,6 +2,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 interface NavigationProps {
   totalSlides: number;
@@ -12,12 +13,19 @@ interface NavigationProps {
 const Navigation: React.FC<NavigationProps> = ({ totalSlides, currentSlide, onNavigate }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isPresenter, setIsPresenter] = useState(false);
+  const router = useRouter();
 
-  // Verifica o localStorage apenas no lado do cliente após a montagem
   useEffect(() => {
     const presenterStatus = localStorage.getItem('isPresenter') === 'true';
     setIsPresenter(presenterStatus);
-  }, []); // Executa apenas uma vez, na montagem
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('isPresenter');
+    localStorage.removeItem('currentPresenterSlide');
+    setIsPresenter(false);
+    router.push('/slide/0'); // Redireciona para o Slide 0 após logout
+  };
 
   return (
     <div
@@ -45,6 +53,14 @@ const Navigation: React.FC<NavigationProps> = ({ totalSlides, currentSlide, onNa
       >
         Próximo
       </button>
+      {isPresenter && (
+        <button
+          onClick={handleLogout}
+          className="px-4 py-2 bg-red-500 text-white rounded-lg"
+        >
+          Sair
+        </button>
+      )}
     </div>
   );
 };

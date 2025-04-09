@@ -1,5 +1,5 @@
 // src/components/slides/Slide0/Slide0.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './Slide0.module.css';
 import { useRouter } from 'next/navigation';
 
@@ -7,17 +7,38 @@ const Slide0: React.FC = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const router = useRouter();
-  const correctPassword = 'D@dos'; // Defina sua senha aqui
+  const correctPassword = 'D@ados';
+
+  useEffect(() => {
+    const existingPresenter = localStorage.getItem('presenterId');
+    if (existingPresenter && localStorage.getItem('isPresenter') !== 'true') {
+      setError('Já existe um apresentador ativo. Aguarde ou expulse-o.');
+    }
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (password === correctPassword) {
-      localStorage.setItem('isPresenter', 'true'); // Marca o usuário como apresentador
-      localStorage.setItem('currentPresenterSlide', '1'); // Define o slide inicial
-      router.push('/slide/1'); // Navega para o Slide 1
+      const existingPresenter = localStorage.getItem('presenterId');
+      if (existingPresenter && localStorage.getItem('isPresenter') !== 'true') {
+        setError('Já existe um apresentador ativo. Expulse-o primeiro.');
+        return;
+      }
+      const presenterId = crypto.randomUUID();
+      localStorage.setItem('isPresenter', 'true');
+      localStorage.setItem('presenterId', presenterId);
+      localStorage.setItem('currentPresenterSlide', '1');
+      router.push('/slide/1');
     } else {
       setError('Senha incorreta!');
     }
+  };
+
+  const handleKickPresenter = () => {
+    localStorage.removeItem('isPresenter');
+    localStorage.removeItem('presenterId');
+    localStorage.removeItem('currentPresenterSlide');
+    setError('Apresentador expulso! Você pode entrar agora.');
   };
 
   return (
@@ -38,6 +59,12 @@ const Slide0: React.FC = () => {
         </button>
         {error && <p className="text-red-500 mt-2">{error}</p>}
       </form>
+      <button
+        onClick={handleKickPresenter}
+        className="mt-4 p-2 bg-red-500 text-white rounded"
+      >
+        Expulsar Apresentador
+      </button>
     </div>
   );
 };

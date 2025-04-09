@@ -6,10 +6,10 @@ import { useRouter } from 'next/navigation';
 const Slide0: React.FC = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [showPasswordField, setShowPasswordField] = useState(false); // Controla a visibilidade do campo de senha
+  const [showPasswordField, setShowPasswordField] = useState(false);
   const router = useRouter();
   const correctPassword = 'D@ados';
-  const kickPassword = 'sair'; // Senha oculta para expulsar o apresentador
+  const kickPassword = 'sair';
 
   useEffect(() => {
     const existingPresenter = localStorage.getItem('presenterId');
@@ -21,27 +21,26 @@ const Slide0: React.FC = () => {
   const handlePresenterClick = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Se o campo de senha não está visível, apenas mostra o campo
     if (!showPasswordField) {
       setShowPasswordField(true);
       return;
     }
 
-    // Se o campo está visível, processa a senha
     const existingPresenter = localStorage.getItem('presenterId');
+    console.log('Senha digitada:', password); // Log para depuração
+    console.log('Presenter existente:', existingPresenter);
 
-    // Senha oculta para expulsar o apresentador
     if (password === kickPassword) {
       localStorage.removeItem('isPresenter');
       localStorage.removeItem('presenterId');
       localStorage.removeItem('currentPresenterSlide');
       setError('Apresentador expulso! Você pode entrar como apresentador agora.');
       setPassword('');
-      setShowPasswordField(false); // Esconde o campo após expulsão
+      setShowPasswordField(false);
+      console.log('Apresentador expulso');
       return;
     }
 
-    // Autenticação como apresentador
     if (password === correctPassword) {
       if (existingPresenter && localStorage.getItem('isPresenter') !== 'true') {
         setError('Já existe um apresentador ativo. Use a senha oculta para expulsá-lo.');
@@ -51,6 +50,7 @@ const Slide0: React.FC = () => {
       localStorage.setItem('isPresenter', 'true');
       localStorage.setItem('presenterId', presenterId);
       localStorage.setItem('currentPresenterSlide', '1');
+      console.log('Autenticado como apresentador:', { isPresenter: localStorage.getItem('isPresenter'), presenterId });
       router.push('/slide/1');
     } else {
       setError('Senha incorreta!');
@@ -81,14 +81,14 @@ const Slide0: React.FC = () => {
         )}
         <button
           type="submit"
-          className="p-2 bg-white text-black rounded w-40"
+          className="p-2 bg-white text-black rounded w-60"
         >
           {showPasswordField ? 'Entrar' : 'Apresentador'}
         </button>
         <button
           type="button"
           onClick={handleSpectatorAccess}
-          className="p-2 bg-blue-500 text-white rounded w-40"
+          className="p-2 bg-blue-500 text-white rounded w-60"
         >
           Acessar como Espectador
         </button>

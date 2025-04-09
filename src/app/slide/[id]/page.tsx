@@ -21,30 +21,30 @@ const SlidePage = () => {
 
   useEffect(() => {
     const presenterStatus = localStorage.getItem('isPresenter') === 'true';
-    const spectatorStatus = localStorage.getItem('isSpectator') === 'true'; // eslint-disable-line @typescript-eslint/no-unused-vars
+    const spectatorStatus = localStorage.getItem('isSpectator') === 'true';
     setIsPresenter(presenterStatus);
     setIsSpectator(spectatorStatus);
+    setPresenterSlide(parseInt(localStorage.getItem('currentPresenterSlide') || '0'));
+    console.log('Estado inicial:', { isPresenter, isSpectator, presenterSlide, slideId });
   }, []);
 
   useEffect(() => {
-    // Se não for apresentador nem espectador, redireciona para Slide 0
     if (!isPresenter && !isSpectator && slideId !== 0) {
+      console.log('Redirecionando para Slide 0: Não autenticado');
       router.replace('/slide/0');
     }
-    // Se for espectador e tentar acessar além do presenterSlide, redireciona para o presenterSlide
     if (isSpectator && slideId > presenterSlide) {
+      console.log('Redirecionando espectador para:', presenterSlide);
       router.replace(`/slide/${presenterSlide}`);
     }
   }, [isPresenter, isSpectator, slideId, presenterSlide, router]);
 
-  // Bloqueia qualquer slide além do 0 se não for autenticado como apresentador ou espectador
   if (!isPresenter && !isSpectator && slideId !== 0) {
     return null;
   }
 
-  // Restringe espectadores a slides futuros
   if (isSpectator && slideId > presenterSlide) {
-    return null; // Será redirecionado pelo useEffect
+    return null;
   }
 
   const renderSlide = () => {
@@ -66,7 +66,10 @@ const SlidePage = () => {
     if (isPresenter && slideNumber >= 0 && slideNumber <= totalSlides) {
       localStorage.setItem('currentPresenterSlide', slideNumber.toString());
       setPresenterSlide(slideNumber);
+      console.log('Navegando para slide:', slideNumber);
       router.push(`/slide/${slideNumber}`);
+    } else {
+      console.log('Navegação bloqueada:', { isPresenter, slideNumber });
     }
   };
 

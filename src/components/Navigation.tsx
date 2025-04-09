@@ -1,5 +1,7 @@
 // src/components/Navigation.tsx
-import React, { useState } from 'react';
+'use client';
+
+import React, { useState, useEffect } from 'react';
 
 interface NavigationProps {
   totalSlides: number;
@@ -9,7 +11,13 @@ interface NavigationProps {
 
 const Navigation: React.FC<NavigationProps> = ({ totalSlides, currentSlide, onNavigate }) => {
   const [isHovered, setIsHovered] = useState(false);
-  const isPresenter = localStorage.getItem('isPresenter') === 'true';
+  const [isPresenter, setIsPresenter] = useState(false);
+
+  // Verifica o localStorage apenas no lado do cliente após a montagem
+  useEffect(() => {
+    const presenterStatus = localStorage.getItem('isPresenter') === 'true';
+    setIsPresenter(presenterStatus);
+  }, []); // Executa apenas uma vez, na montagem
 
   return (
     <div

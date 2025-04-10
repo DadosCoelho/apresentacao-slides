@@ -14,7 +14,7 @@ const Navigation: React.FC<NavigationProps> = ({ totalSlides, currentSlide, onNa
   const [isHovered, setIsHovered] = useState(false);
   const [isPresenter, setIsPresenter] = useState(false);
   const [isSpectator, setIsSpectator] = useState(false);
-  const [idSlidePresenter, setIdSlidePresenter] = useState(0);
+  const [idSlidePresenter, setIdSlidePresenter] = useState(1);
   const router = useRouter();
 
   useEffect(() => {

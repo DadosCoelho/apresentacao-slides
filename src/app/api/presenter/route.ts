@@ -7,7 +7,20 @@ const presenter: { id: string | null; currentSlide: number } = {
   currentSlide: 0,
 };
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const url = new URL(request.url);
+  const action = url.searchParams.get('action');
+
+  if (action === 'expel') {
+    if (presenter.id !== null) {
+      presenter.id = null;
+      presenter.currentSlide = 0;
+      return NextResponse.json({ message: 'Presenter expelled' }, { status: 200 });
+    } else {
+      return NextResponse.json({ error: 'No presenter to expel' }, { status: 404 });
+    }
+  }
+
   return NextResponse.json({
     hasPresenter: presenter.id !== null,
     presenterId: presenter.id,
@@ -27,7 +40,7 @@ export async function POST(request: NextRequest) {
       presenter.currentSlide = 0;
       return NextResponse.json({ presenterId: newPresenterId, currentSlide: 0 }, { status: 200 });
     } else if (presenterId && presenter.id === presenterId) {
-      // Expulsar o apresentador atual
+      // Expulsar o apresentador atual (mantido para compatibilidade com POST)
       presenter.id = null;
       presenter.currentSlide = 0;
       return NextResponse.json({ message: 'Presenter expelled' }, { status: 200 });

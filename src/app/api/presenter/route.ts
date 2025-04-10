@@ -2,12 +2,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 // Simulação de estado no servidor (em produção, use um banco de dados)
-let presenter: { id: string | null; currentSlide: number } = {
+const presenter: { id: string | null; currentSlide: number } = {
   id: null,
   currentSlide: 0,
 };
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   return NextResponse.json({
     hasPresenter: presenter.id !== null,
     presenterId: presenter.id,

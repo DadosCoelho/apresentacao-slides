@@ -32,22 +32,26 @@ const SlidePage = () => {
       setIsSpectator(localIsSpectator);
       setPresenterSlide(data.currentSlide);
       setIsLoading(false);
-
-      // Se for espectador e o slide atual for diferente do apresentador, ajusta
-      if (localIsSpectator && slideId !== data.currentSlide) {
-        router.replace(`/slide/${data.currentSlide}`);
-      }
     };
 
     fetchPresenterStatus(); // Chama ao montar
 
-    // Polling a cada 2 segundos
+    // Polling a cada 2 segundos apenas para atualizar o presenterSlide
     const interval = setInterval(() => {
       fetchPresenterStatus();
     }, 2000);
 
     return () => clearInterval(interval); // Limpa o intervalo ao desmontar
-  }, [slideId, router]);
+  }, [router]);
+
+  useEffect(() => {
+    if (isLoading) return;
+    if (!isPresenter && !isSpectator && slideId !== 0) {
+      router.replace('/slide/0');
+    } else if (isSpectator && slideId > presenterSlide) {
+      router.replace(`/slide/${presenterSlide}`); // Redireciona apenas se tentar ir além do permitido
+    }
+  }, [isPresenter, isSpectator, slideId, presenterSlide, router, isLoading]);
 
   const handleNavigate = (slideNumber: number) => {
     if (slideNumber >= 0 && slideNumber <= totalSlides) {

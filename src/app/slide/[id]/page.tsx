@@ -1,5 +1,4 @@
 //src/app/slide/[id]/page.tsx
-
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -8,7 +7,7 @@ import Slide0 from '../../../components/slides/Slide0/Slide0';
 import Slide1 from '@/components/slides/Slide1/Slide1';
 import Slide2 from '@/components/slides/Slide2/Slide2';
 import Slide3 from '@/components/slides/Slide3/Slide3';
-import Navigation from '@/components/Navigation'; // Importe o Navigation
+import Navigation from '@/components/Navigation';
 
 const SlidePage = () => {
   const params = useParams();
@@ -20,9 +19,8 @@ const SlidePage = () => {
   const [presenterSlide, setPresenterSlide] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
-  const totalSlides = 3; // Número total de slides (0 a 3 = 4 slides)
+  const totalSlides = 3;
 
-  // Carrega o status do apresentador
   useEffect(() => {
     const fetchPresenterStatus = async () => {
       const response = await fetch('/api/presenter');
@@ -38,10 +36,8 @@ const SlidePage = () => {
     fetchPresenterStatus();
   }, []);
 
-  // Lógica de redirecionamento
   useEffect(() => {
     if (isLoading) return;
-
     if (!isPresenter && !isSpectator && slideId !== 0) {
       router.replace('/slide/0');
     } else if (isSpectator && slideId > presenterSlide) {
@@ -49,17 +45,19 @@ const SlidePage = () => {
     }
   }, [isPresenter, isSpectator, slideId, presenterSlide, router, isLoading]);
 
-  // Função para navegar entre slides
   const handleNavigate = (slideNumber: number) => {
     if (slideNumber >= 0 && slideNumber <= totalSlides) {
-      // Atualiza o slide atual no servidor
       fetch('/api/presenter', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ role: 'presenter', presenterId: localStorage.getItem('presenterId'), currentSlide: slideNumber }),
+        body: JSON.stringify({
+          role: 'presenter',
+          presenterId: localStorage.getItem('presenterId'),
+          currentSlide: slideNumber,
+        }),
       }).then(() => {
-        setPresenterSlide(slideNumber); // Atualiza o estado local
-        router.push(`/slide/${slideNumber}`); // Navega para o novo slide
+        setPresenterSlide(slideNumber);
+        router.push(`/slide/${slideNumber}`);
       });
     }
   };
@@ -86,11 +84,7 @@ const SlidePage = () => {
   return (
     <div className="relative">
       {renderSlide()}
-      <Navigation
-        totalSlides={totalSlides}
-        currentSlide={slideId}
-        onNavigate={handleNavigate}
-      />
+      <Navigation totalSlides={totalSlides} currentSlide={slideId} onNavigate={handleNavigate} />
     </div>
   );
 };

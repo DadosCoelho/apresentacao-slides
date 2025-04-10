@@ -14,34 +14,39 @@ const Navigation: React.FC<NavigationProps> = ({ totalSlides, currentSlide, onNa
   const [isHovered, setIsHovered] = useState(false);
   const [isPresenter, setIsPresenter] = useState(false);
   const [isSpectator, setIsSpectator] = useState(false);
-  const [idSlidePresenter, setIdSlidePresenter] = useState(1);
+  const [presenterSlide, setPresenterSlide] = useState(0);
   const router = useRouter();
 
   useEffect(() => {
     const presenter = localStorage.getItem('isPresenter') === 'true';
     const spectator = localStorage.getItem('isSpectator') === 'true';
-    const slidePresenter = parseInt(localStorage.getItem('idSlidePresenter') || '0');
-    
+    const fetchPresenterSlide = async () => {
+      const response = await fetch('/api/presenter');
+      const data = await response.json();
+      setPresenterSlide(data.currentSlide);
+    };
     setIsPresenter(presenter);
     setIsSpectator(spectator);
-    setIdSlidePresenter(slidePresenter);
+    fetchPresenterSlide();
+  }, []);
 
-    if (spectator && currentSlide > slidePresenter) {
-      router.push(`/slide/${slidePresenter}`);
-    }
-  }, [currentSlide, router]);
+  const handleLogout = () => {
+    fetch('/api/presenter', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ role: 'logout' }),
+    }).then(() => {
+      localStorage.clear();
+      router.push('/slide/0');
+    });
+  };
 
   const handleNavigate = (slide: number) => {
     if (isPresenter) {
-      localStorage.setItem('idSlidePresenter', slide.toString());
-      setIdSlidePresenter(slide);
-      onNavigate(slide);
+      onNavigate(slide); // Apresentador pode navegar livremente
+    } else if (isSpectator && slide >= 0 && slide <= presenterSlide) {
+      router.push(`/slide/${slide}`); // Espectador só navega até o slide atual do apresentador
     }
-  };
-
-  const handleLogout = () => {
-    localStorage.clear();
-    router.push('/slide/0');
   };
 
   return (
@@ -52,37 +57,36 @@ const Navigation: React.FC<NavigationProps> = ({ totalSlides, currentSlide, onNa
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {isPresenter && (
+      {(isPresenter || isSpectator) && (
         <>
           <button
             onClick={() => handleNavigate(currentSlide - 1)}
-            disabled={currentSlide === 0}
+            disabled={currentSlide === 0 || (isSpectator && currentSlide <= 0)}
             className="px-4 py-2 bg-white text-black rounded-lg disabled:opacity-50"
           >
             Anterior
           </button>
           <div className="flex items-center text-white">
-            {currentSlide} / {totalSlides}
+            {currentSlide + 1} / {totalSlides + 1}
           </div>
           <button
             onClick={() => handleNavigate(currentSlide + 1)}
-            disabled={currentSlide === totalSlides}
+            disabled={
+              currentSlide === totalSlides || (isSpectator && currentSlide >= presenterSlide)
+            }
             className="px-4 py-2 bg-white text-black rounded-lg disabled:opacity-50"
           >
             Próximo
           </button>
-          <button
-            onClick={handleLogout}
-            className="px-4 py-2 bg-red-500 text-white rounded-lg"
-          >
-            Sair
-          </button>
+          {isPresenter && (
+            <button
+              onClick={handleLogout}
+              className="px-4 py-2 bg-red-500 text-white rounded-lg"
+            >
+              Sair
+            </button>
+          )}
         </>
-      )}
-      {isSpectator && (
-        <div className="flex items-center text-white">
-          {idSlidePresenter} / {totalSlides}
-        </div>
       )}
     </div>
   );

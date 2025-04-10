@@ -53,11 +53,8 @@ const Slide0: React.FC = () => {
   };
 
   const handleExpelPresenter = async () => {
-    const storedPresenterId = localStorage.getItem('presenterId');
-    const response = await fetch('/api/presenter', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ role: 'presenter', presenterId: storedPresenterId }),
+    const response = await fetch('/api/presenter?action=expel', {
+      method: 'GET',
     });
     if (response.ok) {
       localStorage.clear();
@@ -90,41 +87,38 @@ const Slide0: React.FC = () => {
         className={styles.qrCode}
       />
       <h2 className={styles.subtitle}>Criando slides modernos para suas apresentações</h2>
-      <div className="mt-4 flex items-center justify-center gap-2">
-        {isPresenter ? (
-          <>
-            <button
-              onClick={handleExpelPresenter}
-              className="p-2 bg-yellow-500 text-white rounded w-60"
-            >
-              Expulsar Apresentador
-            </button>
-            <button
-              onClick={handleLogout}
-              className="p-2 bg-red-500 text-white rounded w-60"
-            >
-              Sair
-            </button>
-          </>
-        ) : (
-          <>
-            {!hasPresenter && (
-              <button
-                onClick={handlePresenter}
-                className="p-2 bg-white text-black rounded w-60"
-              >
-                Apresentador
-              </button>
-            )}
-            {hasPresenter && (
-              <button
-                onClick={handleSpectator}
-                className="p-2 bg-blue-500 text-white rounded w-60"
-              >
-                Espectador
-              </button>
-            )}
-          </>
+      <div className="mt-4 flex items-center justify-center gap-2 flex-wrap">
+        {!isPresenter && !hasPresenter && (
+          <button
+            onClick={handlePresenter}
+            className="p-2 bg-white text-black rounded w-60"
+          >
+            Apresentador
+          </button>
+        )}
+        {!isPresenter && hasPresenter && (
+          <button
+            onClick={handleSpectator}
+            className="p-2 bg-blue-500 text-white rounded w-60"
+          >
+            Espectador
+          </button>
+        )}
+        {isPresenter && (
+          <button
+            onClick={handleLogout}
+            className="p-2 bg-red-500 text-white rounded w-60"
+          >
+            Sair
+          </button>
+        )}
+        {hasPresenter && (
+          <button
+            onClick={handleExpelPresenter}
+            className="p-2 bg-yellow-500 text-white rounded w-60"
+          >
+            Expulsar Apresentador
+          </button>
         )}
       </div>
     </div>

@@ -15,7 +15,7 @@ export async function GET() {
   });
 }
 
-export async function POST(request: NextRequest) {
+export async function POST(request: NextRequest) { 
   const body = await request.json();
   const { role, presenterId, currentSlide } = body;
 

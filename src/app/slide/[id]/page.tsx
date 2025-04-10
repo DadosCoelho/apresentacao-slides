@@ -1,3 +1,5 @@
+//src/app/slide/[id]/page.tsx
+
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -6,7 +8,6 @@ import Slide0 from '../../../components/slides/Slide0/Slide0';
 import Slide1 from '@/components/slides/Slide1/Slide1';
 import Slide2 from '@/components/slides/Slide2/Slide2';
 import Slide3 from '@/components/slides/Slide3/Slide3';
-import Navigation from '@/components/Navigation';
 
 const SlidePage = () => {
   const params = useParams();
@@ -23,8 +24,9 @@ const SlidePage = () => {
       const response = await fetch('/api/presenter');
       const data = await response.json();
       const localIsPresenter = localStorage.getItem('isPresenter') === 'true';
+      const localPresenterId = localStorage.getItem('presenterId');
       const localIsSpectator = localStorage.getItem('isSpectator') === 'true';
-      setIsPresenter(localIsPresenter && data.presenterId !== null);
+      setIsPresenter(localIsPresenter && localPresenterId === data.presenterId);
       setIsSpectator(localIsSpectator);
       setPresenterSlide(data.currentSlide);
     };
@@ -63,38 +65,9 @@ const SlidePage = () => {
     }
   };
 
-  const handleNavigate = async (slideNumber: number) => {
-    if (isPresenter && slideNumber >= 0 && slideNumber <= totalSlides) {
-      try {
-        const storedPresenterId = localStorage.getItem('presenterId');
-        const response = await fetch('/api/presenter', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ 
-            password: 'D@ados', 
-            role: 'presenter', 
-            presenterId: storedPresenterId // Envia o presenterId armazenado
-          }),
-        });
-        const data = await response.json();
-        if (response.ok && data.presenterId) {
-          setPresenterSlide(slideNumber);
-          router.push(`/slide/${slideNumber}`);
-        } else {
-          console.error('Erro na resposta do servidor:', data.error);
-        }
-      } catch (err) {
-        console.error('Erro ao navegar:', err);
-      }
-    }
-  };
-
   return (
     <div className="relative">
       {renderSlide()}
-      {(isPresenter || isSpectator) && (
-        <Navigation totalSlides={totalSlides} currentSlide={slideId} onNavigate={handleNavigate} />
-      )}
     </div>
   );
 };

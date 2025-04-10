@@ -46,7 +46,7 @@ const Slide0: React.FC = () => {
           setShowPasswordField(false);
         } else {
           localStorage.setItem('isPresenter', 'true');
-          localStorage.setItem('presenterId', data.presenterId);
+          localStorage.setItem('presenterId', data.presenterId); // Armazena o presenterId
           router.push('/slide/1');
         }
       } else {
@@ -61,6 +61,7 @@ const Slide0: React.FC = () => {
   const handleSpectatorAccess = async () => {
     localStorage.setItem('isSpectator', 'true');
     localStorage.removeItem('isPresenter');
+    localStorage.removeItem('presenterId'); // Remove presenterId para espectadores
     try {
       const response = await fetch('/api/presenter', {
         method: 'POST',
@@ -113,7 +114,7 @@ const Slide0: React.FC = () => {
       {error && <p className="text-red-500 mt-2 text-center">{error}</p>}
       {hasPresenter && !showPasswordField && (
         <p className="text-yellow-300 mt-2 text-center">
-          Já existe um apresentador ativo. Use a senha <strong>&quot;sair&quot;</strong> para expulsá-lo.
+          Já existe um apresentador ativo. Use a senha <strong>"sair"</strong> para expulsá-lo.
         </p>
       )}
     </div>

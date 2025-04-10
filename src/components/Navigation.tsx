@@ -26,10 +26,15 @@ const Navigation: React.FC<NavigationProps> = ({ totalSlides, currentSlide, onNa
   }, []);
 
   const handleLogout = async () => {
+    const storedPresenterId = localStorage.getItem('presenterId');
     await fetch('/api/presenter', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password: 'sair', role: 'presenter' }), // Adiciona o role
+      body: JSON.stringify({ 
+        password: 'sair', 
+        role: 'presenter', 
+        presenterId: storedPresenterId // Envia o presenterId armazenado
+      }),
     });
     localStorage.removeItem('isPresenter');
     localStorage.removeItem('presenterId');

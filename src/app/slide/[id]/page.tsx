@@ -1,4 +1,3 @@
-// src/app/slide/[id]/page.tsx
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -67,10 +66,15 @@ const SlidePage = () => {
   const handleNavigate = async (slideNumber: number) => {
     if (isPresenter && slideNumber >= 0 && slideNumber <= totalSlides) {
       try {
+        const storedPresenterId = localStorage.getItem('presenterId');
         const response = await fetch('/api/presenter', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ password: 'D@ados', role: 'presenter' }), // Adiciona o role
+          body: JSON.stringify({ 
+            password: 'D@ados', 
+            role: 'presenter', 
+            presenterId: storedPresenterId // Envia o presenterId armazenado
+          }),
         });
         const data = await response.json();
         if (response.ok && data.presenterId) {

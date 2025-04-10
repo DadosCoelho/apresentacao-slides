@@ -13,16 +13,19 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const { password, role } = await request.json();
+  const { password, role, presenterId: clientPresenterId } = await request.json();
 
   // Expulsa o apresentador atual (apenas por apresentadores ou tentativa de novo apresentador)
-  if (password === 'sair' && (role === 'presenter' || !role)) {
-    if (presenterId !== null) {
+  if (password === 'sair' && role === 'presenter') {
+    if (presenterId === null) {
+      return NextResponse.json({ error: 'Nenhum apresentador para expulsar' }, { status: 400 });
+    }
+    if (clientPresenterId && clientPresenterId === presenterId) {
       presenterId = null;
       currentSlide = 0;
       return NextResponse.json({ message: 'Apresentador expulso', hasPresenter: false });
     }
-    return NextResponse.json({ error: 'Nenhum apresentador para expulsar' }, { status: 400 });
+    return NextResponse.json({ error: 'Apenas o apresentador atual pode expulsar' }, { status: 403 });
   }
 
   // Tenta criar um novo apresentador
@@ -48,5 +51,10 @@ export async function POST(request: Request) {
     });
   }
 
-  return NextResponse.json({ error: 'Senha incorreta ou papel inválido' }, { status: 403 });
+  // Navegação ou outras ações do apresentador
+  if (role === 'presenter' && clientPresenterId === presenterId) {
+    return NextResponse.json({ presenterId, currentSlide, hasPresenter: true });
+  }
+
+  return NextResponse.json({ error: 'Senha incorreta, papel inválido ou ID do apresentador não corresponde' }, { status: 403 });
 }

@@ -7,7 +7,7 @@ const presenter: { id: string | null; currentSlide: number } = {
   currentSlide: 0,
 };
 
-export async function GET(_request: NextRequest) {
+export async function GET() {
   return NextResponse.json({
     hasPresenter: presenter.id !== null,
     presenterId: presenter.id,

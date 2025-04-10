@@ -25,7 +25,7 @@ const SlidePage = () => {
       const data = await response.json();
       const localIsPresenter = localStorage.getItem('isPresenter') === 'true';
       const localIsSpectator = localStorage.getItem('isSpectator') === 'true';
-      setIsPresenter(localIsPresenter && data.presenterId !== null); // Só é apresentador se local e API confirmarem
+      setIsPresenter(localIsPresenter && data.presenterId !== null);
       setIsSpectator(localIsSpectator);
       setPresenterSlide(data.currentSlide);
     };
@@ -70,7 +70,7 @@ const SlidePage = () => {
         const response = await fetch('/api/presenter', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ password: 'D@ados' }), // Revalida a senha para manter o estado
+          body: JSON.stringify({ password: 'D@ados' }),
         });
         const data = await response.json();
         if (response.ok) {
@@ -86,7 +86,9 @@ const SlidePage = () => {
   return (
     <div className="relative">
       {renderSlide()}
-      <Navigation totalSlides={totalSlides} currentSlide={slideId} onNavigate={handleNavigate} />
+      {(isPresenter || isSpectator) && (
+        <Navigation totalSlides={totalSlides} currentSlide={slideId} onNavigate={handleNavigate} />
+      )}
     </div>
   );
 };

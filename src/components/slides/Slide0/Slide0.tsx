@@ -1,7 +1,7 @@
 // src/components/slides/Slide0/Slide0.tsx
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import styles from './Slide0.module.css';
 import { useRouter } from 'next/navigation';
@@ -10,7 +10,18 @@ const Slide0: React.FC = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [showPasswordField, setShowPasswordField] = useState(false);
+  const [hasPresenter, setHasPresenter] = useState(false);
   const router = useRouter();
+
+  // Verifica se já existe um apresentador ao carregar o componente
+  useEffect(() => {
+    const fetchPresenterStatus = async () => {
+      const response = await fetch('/api/presenter');
+      const data = await response.json();
+      setHasPresenter(data.hasPresenter);
+    };
+    fetchPresenterStatus();
+  }, []);
 
   const handlePresenterClick = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,12 +38,12 @@ const Slide0: React.FC = () => {
         body: JSON.stringify({ password }),
       });
 
-      // Garante que o ESLint reconheça o uso de data com supressão correta
-      const data = await response.json(); // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const data = await response.json();
 
       if (response.ok) {
         if (data.message === 'Apresentador expulso') {
           setError('Apresentador expulso! Você pode entrar como apresentador agora.');
+          setHasPresenter(false);
           setPassword('');
           setShowPasswordField(false);
         } else {
@@ -72,7 +83,7 @@ const Slide0: React.FC = () => {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Senha do apresentador"
+            placeholder={hasPresenter ? 'Senha para expulsar (sair)' : 'Senha do apresentador'}
             className="p-2 rounded text-black"
             autoFocus
           />
@@ -89,6 +100,11 @@ const Slide0: React.FC = () => {
         </button>
       </form>
       {error && <p className="text-red-500 mt-2 text-center">{error}</p>}
+      {hasPresenter && !showPasswordField && (
+        <p className="text-yellow-300 mt-2 text-center">
+          Já existe um apresentador ativo. Clique em "Apresentador" para expulsá-lo.
+        </p>
+      )}
     </div>
   );
 };

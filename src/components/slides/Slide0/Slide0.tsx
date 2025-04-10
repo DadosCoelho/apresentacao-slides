@@ -32,7 +32,6 @@ const Slide0: React.FC = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ role: 'presenter', presenterId: storedPresenterId }),
       });
-      const data = await response.json();
       if (response.ok) {
         localStorage.removeItem('isPresenter');
         localStorage.removeItem('presenterId');
@@ -46,10 +45,10 @@ const Slide0: React.FC = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ role: 'presenter' }),
       });
-      const data = await response.json();
+      const { presenterId } = await response.json();
       if (response.ok) {
         localStorage.setItem('isPresenter', 'true');
-        localStorage.setItem('presenterId', data.presenterId);
+        localStorage.setItem('presenterId', presenterId);
         setIsPresenter(true);
         setHasPresenter(true);
         router.push('/slide/1');
@@ -66,9 +65,9 @@ const Slide0: React.FC = () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ role: 'spectator' }),
     });
-    const data = await response.json();
+    const { currentSlide } = await response.json();
     if (response.ok) {
-      router.push(`/slide/${data.currentSlide || 0}`);
+      router.push(`/slide/${currentSlide || 0}`);
     }
   };
 

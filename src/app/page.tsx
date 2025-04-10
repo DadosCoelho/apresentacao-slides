@@ -8,7 +8,7 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace('/slide/0');
+    router.replace('/slide/1');
   }, [router]);
 
   return null; // Não renderiza nada, apenas redireciona

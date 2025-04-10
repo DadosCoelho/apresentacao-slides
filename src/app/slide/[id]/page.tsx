@@ -10,11 +10,11 @@ import Slide2 from '@/components/slides/Slide2/Slide2';
 import Slide3 from '@/components/slides/Slide3/Slide3';
 
 const SlidePage = () => {
-  const params = useParams();
-  const router = useRouter();
+  const params = useParams(); 
+  const router = useRouter(); 
   const slideId = parseInt(params.id as string) || 0;
 
-  const [isPresenter, setIsPresenter] = useState(false);
+  const [isPresenter, setIsPresenter] = useState(false); 
   const [isSpectator, setIsSpectator] = useState(false);
   const [presenterSlide, setPresenterSlide] = useState(0);
 

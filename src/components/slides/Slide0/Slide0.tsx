@@ -24,7 +24,7 @@ const Slide0: React.FC = () => {
   }, []);
 
   const handlePresenterAction = async () => {
-    if (hasPresenter) {
+    if (hasPresenter) { 
       // Expulsar o apresentador atual
       const storedPresenterId = localStorage.getItem('presenterId');
       const response = await fetch('/api/presenter', {
@@ -66,8 +66,8 @@ const Slide0: React.FC = () => {
       body: JSON.stringify({ role: 'spectator' }),
     });
     const { currentSlide } = await response.json();
-    if (response.ok) {
-      router.push(`/slide/${currentSlide || 0}`);
+    if (response.ok) { 
+      router.push(`/slide/1}`);
     }
   };
 

@@ -7,20 +7,7 @@ const presenter: { id: string | null; currentSlide: number } = {
   currentSlide: 0,
 };
 
-export async function GET(request: NextRequest) {
-  const url = new URL(request.url);
-  const action = url.searchParams.get('action');
-
-  if (action === 'expel') {
-    if (presenter.id !== null) {
-      presenter.id = null;
-      presenter.currentSlide = 0;
-      return NextResponse.json({ message: 'Presenter expelled' }, { status: 200 });
-    } else {
-      return NextResponse.json({ error: 'No presenter to expel' }, { status: 404 });
-    }
-  }
-
+export async function GET() {
   return NextResponse.json({
     hasPresenter: presenter.id !== null,
     presenterId: presenter.id,
@@ -30,17 +17,21 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
-  const { role, presenterId } = body;
+  const { role, presenterId, currentSlide } = body;
 
   if (role === 'presenter') {
     if (presenter.id === null) {
-      // Tornar-se apresentador
-      const newPresenterId = presenterId || Math.random().toString(36).substring(2); // Gera um ID único
+      const newPresenterId = presenterId || Math.random().toString(36).substring(2);
       presenter.id = newPresenterId;
       presenter.currentSlide = 0;
       return NextResponse.json({ presenterId: newPresenterId, currentSlide: 0 }, { status: 200 });
     } else if (presenterId && presenter.id === presenterId) {
-      // Expulsar o apresentador atual (mantido para compatibilidade com POST)
+      if (currentSlide !== undefined) {
+        // Atualiza o slide atual do apresentador
+        presenter.currentSlide = currentSlide;
+        return NextResponse.json({ presenterId, currentSlide }, { status: 200 });
+      }
+      // Expulsar o apresentador
       presenter.id = null;
       presenter.currentSlide = 0;
       return NextResponse.json({ message: 'Presenter expelled' }, { status: 200 });
@@ -48,10 +39,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Presenter already exists' }, { status: 403 });
     }
   } else if (role === 'spectator') {
-    // Apenas retorna o slide atual do apresentador
     return NextResponse.json({ currentSlide: presenter.currentSlide }, { status: 200 });
   } else if (role === 'logout') {
-    // Logout geral (limpa o apresentador)
     presenter.id = null;
     presenter.currentSlide = 0;
     return NextResponse.json({ message: 'Logged out' }, { status: 200 });
@@ -59,3 +48,4 @@ export async function POST(request: NextRequest) {
 
   return NextResponse.json({ error: 'Invalid role' }, { status: 400 });
 }
+

@@ -1,5 +1,4 @@
 // src/components/Navigation.tsx
-// src/components/Navigation.tsx
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -14,41 +13,34 @@ interface NavigationProps {
 const Navigation: React.FC<NavigationProps> = ({ totalSlides, currentSlide, onNavigate }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isPresenter, setIsPresenter] = useState(false);
-  const [isSpectator, setIsSpectator] = useState(false); // Novo estado para espectador
+  const [isSpectator, setIsSpectator] = useState(false);
+  const [idSlidePresenter, setIdSlidePresenter] = useState(0);
   const router = useRouter();
 
   useEffect(() => {
-    const fetchPresenterStatus = async () => {
-      const response = await fetch('/api/presenter');
-      const data = await response.json();
-      const localIsPresenter = localStorage.getItem('isPresenter') === 'true';
-      const localIsSpectator = localStorage.getItem('isSpectator') === 'true'; // Verifica se é espectador
-      setIsPresenter(localIsPresenter && data.presenterId !== null);
-      setIsSpectator(localIsSpectator); // Define o estado do espectador
-    };
-    fetchPresenterStatus();
-  }, []);
+    const presenter = localStorage.getItem('isPresenter') === 'true';
+    const spectator = localStorage.getItem('isSpectator') === 'true';
+    const slidePresenter = parseInt(localStorage.getItem('idSlidePresenter') || '0');
+    
+    setIsPresenter(presenter);
+    setIsSpectator(spectator);
+    setIdSlidePresenter(slidePresenter);
 
-  const handleLogoutPresenter = async () => {
-    const storedPresenterId = localStorage.getItem('presenterId');
-    await fetch('/api/presenter', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ 
-        password: 'sair', 
-        role: 'presenter', 
-        presenterId: storedPresenterId
-      }),
-    });
-    localStorage.removeItem('isPresenter');
-    localStorage.removeItem('presenterId');
-    setIsPresenter(false);
-    router.push('/slide/0'); 
+    if (spectator && currentSlide > slidePresenter) {
+      router.push(`/slide/${slidePresenter}`);
+    }
+  }, [currentSlide, router]);
+
+  const handleNavigate = (slide: number) => {
+    if (isPresenter) {
+      localStorage.setItem('idSlidePresenter', slide.toString());
+      setIdSlidePresenter(slide);
+      onNavigate(slide);
+    }
   };
 
-  const handleLogoutSpectator = () => {
-    localStorage.removeItem('isSpectator');
-    setIsSpectator(false);
+  const handleLogout = () => {
+    localStorage.clear();
     router.push('/slide/0');
   };
 
@@ -59,12 +51,11 @@ const Navigation: React.FC<NavigationProps> = ({ totalSlides, currentSlide, onNa
       }`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      tabIndex={0}
     >
       {isPresenter && (
         <>
           <button
-            onClick={() => onNavigate(currentSlide - 1)}
+            onClick={() => handleNavigate(currentSlide - 1)}
             disabled={currentSlide === 0}
             className="px-4 py-2 bg-white text-black rounded-lg disabled:opacity-50"
           >
@@ -74,31 +65,23 @@ const Navigation: React.FC<NavigationProps> = ({ totalSlides, currentSlide, onNa
             {currentSlide} / {totalSlides}
           </div>
           <button
-            onClick={() => onNavigate(currentSlide + 1)}
+            onClick={() => handleNavigate(currentSlide + 1)}
             disabled={currentSlide === totalSlides}
             className="px-4 py-2 bg-white text-black rounded-lg disabled:opacity-50"
           >
             Próximo
           </button>
           <button
-            onClick={handleLogoutPresenter}
+            onClick={handleLogout}
             className="px-4 py-2 bg-red-500 text-white rounded-lg"
           >
             Sair
           </button>
         </>
       )}
-      {isSpectator && currentSlide === 0 && (
-        <button
-          onClick={handleLogoutSpectator}
-          className="px-4 py-2 bg-red-500 text-white rounded-lg"
-        >
-          Sair
-        </button>
-      )}
-      {!isPresenter && !isSpectator && (
+      {isSpectator && (
         <div className="flex items-center text-white">
-          {currentSlide} / {totalSlides}
+          {idSlidePresenter} / {totalSlides}
         </div>
       )}
     </div>

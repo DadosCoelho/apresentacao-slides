@@ -45,7 +45,7 @@ const SlidePage = () => {
     return null;
   }
 
-  if (isSpectator && slideId > presenterSlide) {
+  if (isSpectator && slideId > presenterSlide) { 
     return null;
   }
 

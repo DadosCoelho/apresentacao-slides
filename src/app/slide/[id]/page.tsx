@@ -17,8 +17,9 @@ const SlidePage = () => {
   const [isPresenter, setIsPresenter] = useState(false);
   const [isSpectator, setIsSpectator] = useState(false);
   const [presenterSlide, setPresenterSlide] = useState(0);
-  const [isLoading, setIsLoading] = useState(true); // Novo estado
+  const [isLoading, setIsLoading] = useState(true);
 
+  // Carrega o status do apresentador
   useEffect(() => {
     const fetchPresenterStatus = async () => {
       const response = await fetch('/api/presenter');
@@ -29,41 +30,26 @@ const SlidePage = () => {
       setIsPresenter(localIsPresenter && localPresenterId === data.presenterId);
       setIsSpectator(localIsSpectator);
       setPresenterSlide(data.currentSlide);
-      setIsLoading(false); // Marca como carregado
+      setIsLoading(false);
     };
     fetchPresenterStatus();
   }, []);
 
+  // Lógica de redirecionamento
   useEffect(() => {
-    if (isLoading) return; // Não redireciona enquanto está carregando
+    if (isLoading) return; // Aguarda o carregamento
+
     if (!isPresenter && !isSpectator && slideId !== 0) {
       router.replace('/slide/0');
-    }
-    if (isSpectator && slideId > presenterSlide) {
+    } else if (isSpectator && slideId > presenterSlide) {
       router.replace(`/slide/${presenterSlide}`);
     }
   }, [isPresenter, isSpectator, slideId, presenterSlide, router, isLoading]);
 
-  if (isLoading) return null; // Evita renderizar enquanto carrega
+  // Renderiza apenas após o carregamento e se as condições forem atendidas
+  if (isLoading) return null;
   if (!isPresenter && !isSpectator && slideId !== 0) return null;
   if (isSpectator && slideId > presenterSlide) return null;
-  
-  useEffect(() => {
-    if (!isPresenter && !isSpectator && slideId !== 0) {
-      router.replace('/slide/0');
-    }
-    if (isSpectator && slideId > presenterSlide) {
-      router.replace(`/slide/${presenterSlide}`);
-    }
-  }, [isPresenter, isSpectator, slideId, presenterSlide, router]);
-
-  if (!isPresenter && !isSpectator && slideId !== 0) {
-    return null;
-  }
-
-  if (isSpectator && slideId > presenterSlide) { 
-    return null;
-  }
 
   const renderSlide = () => {
     switch (slideId) {

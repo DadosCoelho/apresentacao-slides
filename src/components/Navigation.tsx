@@ -30,17 +30,6 @@ const Navigation: React.FC<NavigationProps> = ({ totalSlides, currentSlide, onNa
     fetchPresenterSlide();
   }, []);
 
-  const handleLogout = () => {
-    fetch('/api/presenter', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ role: 'logout' }),
-    }).then(() => {
-      localStorage.clear();
-      router.push('/slide/0');
-    });
-  };
-
   const handleNavigate = (slide: number) => {
     if (isPresenter) {
       onNavigate(slide); // Apresentador pode navegar livremente
@@ -78,14 +67,6 @@ const Navigation: React.FC<NavigationProps> = ({ totalSlides, currentSlide, onNa
           >
             Próximo
           </button>
-          {isPresenter && (
-            <button
-              onClick={handleLogout}
-              className="px-4 py-2 bg-red-500 text-white rounded-lg"
-            >
-              Sair
-            </button>
-          )}
         </>
       )}
     </div>

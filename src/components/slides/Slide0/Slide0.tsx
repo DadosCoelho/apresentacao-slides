@@ -1,5 +1,4 @@
 // src/components/slides/Slide0/Slide0.tsx
-// src/components/slides/Slide0/Slide0.tsx
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -35,7 +34,7 @@ const Slide0: React.FC = () => {
       const response = await fetch('/api/presenter', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password }),
+        body: JSON.stringify({ password, role: 'presenter' }), // Adiciona o role
       });
 
       const data = await response.json();
@@ -60,10 +59,23 @@ const Slide0: React.FC = () => {
     }
   };
 
-  const handleSpectatorAccess = () => {
+  const handleSpectatorAccess = async () => {
     localStorage.setItem('isSpectator', 'true');
     localStorage.removeItem('isPresenter');
-    router.push('/slide/0');
+    try {
+      const response = await fetch('/api/presenter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ role: 'spectator' }), // Adiciona o role como spectator
+      });
+      const data = await response.json();
+      if (response.ok) {
+        router.push(`/slide/${data.currentSlide || 0}`);
+      }
+    } catch (err) {
+      console.error('Erro ao acessar como espectador:', err);
+      router.push('/slide/0'); // Fallback em caso de erro
+    }
   };
 
   return (
@@ -102,7 +114,7 @@ const Slide0: React.FC = () => {
       {error && <p className="text-red-500 mt-2 text-center">{error}</p>}
       {hasPresenter && !showPasswordField && (
         <p className="text-yellow-300 mt-2 text-center">
-          Já existe um apresentador ativo. Use a senha <strong>&quot;sair&quot;</strong> para expulsá-lo.
+          Já existe um apresentador ativo. Use a senha <strong>"sair"</strong> para expulsá-lo.
         </p>
       )}
     </div>

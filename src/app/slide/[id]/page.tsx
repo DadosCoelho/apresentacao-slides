@@ -1,5 +1,4 @@
 // src/app/slide/[id]/page.tsx
-// src/app/slide/[id]/page.tsx
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -71,10 +70,10 @@ const SlidePage = () => {
         const response = await fetch('/api/presenter', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ password: 'D@ados' }),
+          body: JSON.stringify({ password: 'D@ados', role: 'presenter' }), // Adiciona o role
         });
         const data = await response.json();
-        if (response.ok && data.presenterId) { // Usamos 'data' aqui para verificar o sucesso
+        if (response.ok && data.presenterId) {
           setPresenterSlide(slideNumber);
           router.push(`/slide/${slideNumber}`);
         } else {

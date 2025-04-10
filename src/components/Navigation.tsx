@@ -29,7 +29,7 @@ const Navigation: React.FC<NavigationProps> = ({ totalSlides, currentSlide, onNa
     await fetch('/api/presenter', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password: 'sair' }),
+      body: JSON.stringify({ password: 'sair', role: 'presenter' }), // Adiciona o role
     });
     localStorage.removeItem('isPresenter');
     localStorage.removeItem('presenterId');

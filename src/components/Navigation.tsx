@@ -1,4 +1,5 @@
 // src/components/Navigation.tsx
+// src/components/Navigation.tsx
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -13,6 +14,7 @@ interface NavigationProps {
 const Navigation: React.FC<NavigationProps> = ({ totalSlides, currentSlide, onNavigate }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isPresenter, setIsPresenter] = useState(false);
+  const [isSpectator, setIsSpectator] = useState(false); // Novo estado para espectador
   const router = useRouter();
 
   useEffect(() => {
@@ -20,12 +22,14 @@ const Navigation: React.FC<NavigationProps> = ({ totalSlides, currentSlide, onNa
       const response = await fetch('/api/presenter');
       const data = await response.json();
       const localIsPresenter = localStorage.getItem('isPresenter') === 'true';
+      const localIsSpectator = localStorage.getItem('isSpectator') === 'true'; // Verifica se é espectador
       setIsPresenter(localIsPresenter && data.presenterId !== null);
+      setIsSpectator(localIsSpectator); // Define o estado do espectador
     };
     fetchPresenterStatus();
   }, []);
 
-  const handleLogout = async () => {
+  const handleLogoutPresenter = async () => {
     const storedPresenterId = localStorage.getItem('presenterId');
     await fetch('/api/presenter', {
       method: 'POST',
@@ -33,12 +37,18 @@ const Navigation: React.FC<NavigationProps> = ({ totalSlides, currentSlide, onNa
       body: JSON.stringify({ 
         password: 'sair', 
         role: 'presenter', 
-        presenterId: storedPresenterId // Envia o presenterId armazenado
+        presenterId: storedPresenterId
       }),
     });
     localStorage.removeItem('isPresenter');
     localStorage.removeItem('presenterId');
     setIsPresenter(false);
+    router.push('/slide/0'); 
+  };
+
+  const handleLogoutSpectator = () => {
+    localStorage.removeItem('isSpectator');
+    setIsSpectator(false);
     router.push('/slide/0');
   };
 
@@ -51,30 +61,45 @@ const Navigation: React.FC<NavigationProps> = ({ totalSlides, currentSlide, onNa
       onMouseLeave={() => setIsHovered(false)}
       tabIndex={0}
     >
-      <button
-        onClick={() => onNavigate(currentSlide - 1)}
-        disabled={currentSlide === 0 || !isPresenter}
-        className="px-4 py-2 bg-white text-black rounded-lg disabled:opacity-50"
-      >
-        Anterior
-      </button>
-      <div className="flex items-center text-white">
-        {currentSlide} / {totalSlides}
-      </div>
-      <button
-        onClick={() => onNavigate(currentSlide + 1)}
-        disabled={currentSlide === totalSlides || !isPresenter}
-        className="px-4 py-2 bg-white text-black rounded-lg disabled:opacity-50"
-      >
-        Próximo
-      </button>
       {isPresenter && (
+        <>
+          <button
+            onClick={() => onNavigate(currentSlide - 1)}
+            disabled={currentSlide === 0}
+            className="px-4 py-2 bg-white text-black rounded-lg disabled:opacity-50"
+          >
+            Anterior
+          </button>
+          <div className="flex items-center text-white">
+            {currentSlide} / {totalSlides}
+          </div>
+          <button
+            onClick={() => onNavigate(currentSlide + 1)}
+            disabled={currentSlide === totalSlides}
+            className="px-4 py-2 bg-white text-black rounded-lg disabled:opacity-50"
+          >
+            Próximo
+          </button>
+          <button
+            onClick={handleLogoutPresenter}
+            className="px-4 py-2 bg-red-500 text-white rounded-lg"
+          >
+            Sair
+          </button>
+        </>
+      )}
+      {isSpectator && currentSlide === 0 && (
         <button
-          onClick={handleLogout}
+          onClick={handleLogoutSpectator}
           className="px-4 py-2 bg-red-500 text-white rounded-lg"
         >
           Sair
         </button>
+      )}
+      {!isPresenter && !isSpectator && (
+        <div className="flex items-center text-white">
+          {currentSlide} / {totalSlides}
+        </div>
       )}
     </div>
   );

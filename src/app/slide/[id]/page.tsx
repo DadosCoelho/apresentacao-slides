@@ -13,7 +13,6 @@ const SlidePage = () => {
   const params = useParams();
   const router = useRouter();
   const slideId = parseInt(params.id as string) || 0;
-  const totalSlides = 3;
 
   const [isPresenter, setIsPresenter] = useState(false);
   const [isSpectator, setIsSpectator] = useState(false);

@@ -15,10 +15,10 @@ const Slide0: React.FC = () => {
   useEffect(() => {
     const fetchPresenterStatus = async () => {
       const response = await fetch('/api/presenter');
-      const data = await response.json();
-      setHasPresenter(data.hasPresenter);
+      const { presenterId: serverPresenterId, hasPresenter: serverHasPresenter } = await response.json();
       const localPresenterId = localStorage.getItem('presenterId');
-      setIsPresenter(!!localPresenterId && localPresenterId === data.presenterId);
+      setHasPresenter(serverHasPresenter);
+      setIsPresenter(!!localPresenterId && localPresenterId === serverPresenterId);
     };
     fetchPresenterStatus();
   }, []);

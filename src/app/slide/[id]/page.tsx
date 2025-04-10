@@ -10,13 +10,14 @@ import Slide2 from '@/components/slides/Slide2/Slide2';
 import Slide3 from '@/components/slides/Slide3/Slide3';
 
 const SlidePage = () => {
-  const params = useParams(); 
-  const router = useRouter(); 
+  const params = useParams();
+  const router = useRouter();
   const slideId = parseInt(params.id as string) || 0;
 
-  const [isPresenter, setIsPresenter] = useState(false); 
+  const [isPresenter, setIsPresenter] = useState(false);
   const [isSpectator, setIsSpectator] = useState(false);
   const [presenterSlide, setPresenterSlide] = useState(0);
+  const [isLoading, setIsLoading] = useState(true); // Novo estado
 
   useEffect(() => {
     const fetchPresenterStatus = async () => {
@@ -28,10 +29,25 @@ const SlidePage = () => {
       setIsPresenter(localIsPresenter && localPresenterId === data.presenterId);
       setIsSpectator(localIsSpectator);
       setPresenterSlide(data.currentSlide);
+      setIsLoading(false); // Marca como carregado
     };
     fetchPresenterStatus();
   }, []);
 
+  useEffect(() => {
+    if (isLoading) return; // Não redireciona enquanto está carregando
+    if (!isPresenter && !isSpectator && slideId !== 0) {
+      router.replace('/slide/0');
+    }
+    if (isSpectator && slideId > presenterSlide) {
+      router.replace(`/slide/${presenterSlide}`);
+    }
+  }, [isPresenter, isSpectator, slideId, presenterSlide, router, isLoading]);
+
+  if (isLoading) return null; // Evita renderizar enquanto carrega
+  if (!isPresenter && !isSpectator && slideId !== 0) return null;
+  if (isSpectator && slideId > presenterSlide) return null;
+  
   useEffect(() => {
     if (!isPresenter && !isSpectator && slideId !== 0) {
       router.replace('/slide/0');

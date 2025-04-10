@@ -1,4 +1,5 @@
 // src/app/slide/[id]/page.tsx
+// src/app/slide/[id]/page.tsx
 'use client';
 
 import React, { useEffect, useState } from 'react';
@@ -73,9 +74,11 @@ const SlidePage = () => {
           body: JSON.stringify({ password: 'D@ados' }),
         });
         const data = await response.json();
-        if (response.ok) {
+        if (response.ok && data.presenterId) { // Usamos 'data' aqui para verificar o sucesso
           setPresenterSlide(slideNumber);
           router.push(`/slide/${slideNumber}`);
+        } else {
+          console.error('Erro na resposta do servidor:', data.error);
         }
       } catch (err) {
         console.error('Erro ao navegar:', err);

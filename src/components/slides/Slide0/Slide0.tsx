@@ -1,4 +1,5 @@
 // src/components/slides/Slide0/Slide0.tsx
+// src/components/slides/Slide0/Slide0.tsx
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -13,7 +14,6 @@ const Slide0: React.FC = () => {
   const [hasPresenter, setHasPresenter] = useState(false);
   const router = useRouter();
 
-  // Verifica se já existe um apresentador ao carregar o componente
   useEffect(() => {
     const fetchPresenterStatus = async () => {
       const response = await fetch('/api/presenter');
@@ -102,7 +102,7 @@ const Slide0: React.FC = () => {
       {error && <p className="text-red-500 mt-2 text-center">{error}</p>}
       {hasPresenter && !showPasswordField && (
         <p className="text-yellow-300 mt-2 text-center">
-          Já existe um apresentador ativo. Clique em "Apresentador" para expulsá-lo.
+          Já existe um apresentador ativo. Use a senha <strong>&quot;sair&quot;</strong> para expulsá-lo.
         </p>
       )}
     </div>

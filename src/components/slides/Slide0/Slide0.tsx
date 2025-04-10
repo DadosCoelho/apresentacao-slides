@@ -15,10 +15,10 @@ const Slide0: React.FC = () => {
       const response = await fetch('/api/presenter');
       const { hasPresenter: serverHasPresenter } = await response.json();
       setHasPresenter(serverHasPresenter);
-      
+
       const isPresenter = localStorage.getItem('isPresenter') === 'true';
       const isSpectator = localStorage.getItem('isSpectator') === 'true';
-      
+
       if (!isPresenter && !isSpectator) {
         router.push('/slide/0');
       }
@@ -52,6 +52,20 @@ const Slide0: React.FC = () => {
     router.push(`/slide/${currentSlide || 1}`);
   };
 
+  const handleExpelPresenter = async () => {
+    const storedPresenterId = localStorage.getItem('presenterId');
+    const response = await fetch('/api/presenter', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ role: 'presenter', presenterId: storedPresenterId }),
+    });
+    if (response.ok) {
+      localStorage.clear();
+      setHasPresenter(false);
+      router.push('/slide/0');
+    }
+  };
+
   const handleLogout = async () => {
     await fetch('/api/presenter', {
       method: 'POST',
@@ -62,6 +76,8 @@ const Slide0: React.FC = () => {
     setHasPresenter(false);
     router.push('/slide/0');
   };
+
+  const isPresenter = localStorage.getItem('isPresenter') === 'true';
 
   return (
     <div className={styles.container}>
@@ -75,13 +91,21 @@ const Slide0: React.FC = () => {
       />
       <h2 className={styles.subtitle}>Criando slides modernos para suas apresentações</h2>
       <div className="mt-4 flex items-center justify-center gap-2">
-        {localStorage.getItem('isPresenter') === 'true' ? (
-          <button
-            onClick={handleLogout}
-            className="p-2 bg-red-500 text-white rounded w-60"
-          >
-            Sair
-          </button>
+        {isPresenter ? (
+          <>
+            <button
+              onClick={handleExpelPresenter}
+              className="p-2 bg-yellow-500 text-white rounded w-60"
+            >
+              Expulsar Apresentador
+            </button>
+            <button
+              onClick={handleLogout}
+              className="p-2 bg-red-500 text-white rounded w-60"
+            >
+              Sair
+            </button>
+          </>
         ) : (
           <>
             {!hasPresenter && (

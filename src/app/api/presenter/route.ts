@@ -1,49 +1,48 @@
 // src/app/api/presenter/route.ts
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
-let presenterId: string | null = null;
-let currentSlide = 0;
+// Simulação de estado no servidor (em produção, use um banco de dados)
+let presenter: { id: string | null; currentSlide: number } = {
+  id: null,
+  currentSlide: 0,
+};
 
-export async function GET() {
-  return NextResponse.json({ 
-    presenterId, 
-    currentSlide, 
-    hasPresenter: presenterId !== null 
+export async function GET(request: NextRequest) {
+  return NextResponse.json({
+    hasPresenter: presenter.id !== null,
+    presenterId: presenter.id,
+    currentSlide: presenter.currentSlide,
   });
 }
 
-export async function POST(request: Request) {
-  const { role, presenterId: clientPresenterId } = await request.json();
+export async function POST(request: NextRequest) {
+  const body = await request.json();
+  const { role, presenterId } = body;
 
-  // Expulsar o apresentador atual
-  if (role === 'presenter' && clientPresenterId === presenterId) {
-    presenterId = null;
-    currentSlide = 0;
-    return NextResponse.json({ message: 'Apresentador expulso', hasPresenter: false });
-  }
-
-  // Criar um novo apresentador
-  if (role === 'presenter' && !clientPresenterId) {
-    if (presenterId === null) {
-      presenterId = crypto.randomUUID();
-      currentSlide = 1;
-      return NextResponse.json({ presenterId, currentSlide, hasPresenter: true });
+  if (role === 'presenter') {
+    if (presenter.id === null) {
+      // Tornar-se apresentador
+      const newPresenterId = presenterId || Math.random().toString(36).substring(2); // Gera um ID único
+      presenter.id = newPresenterId;
+      presenter.currentSlide = 0;
+      return NextResponse.json({ presenterId: newPresenterId, currentSlide: 0 }, { status: 200 });
+    } else if (presenterId && presenter.id === presenterId) {
+      // Expulsar o apresentador atual
+      presenter.id = null;
+      presenter.currentSlide = 0;
+      return NextResponse.json({ message: 'Presenter expelled' }, { status: 200 });
     } else {
-      return NextResponse.json({ 
-        error: 'Já existe um apresentador ativo.', 
-        hasPresenter: true 
-      }, { status: 403 });
+      return NextResponse.json({ error: 'Presenter already exists' }, { status: 403 });
     }
+  } else if (role === 'spectator') {
+    // Apenas retorna o slide atual do apresentador
+    return NextResponse.json({ currentSlide: presenter.currentSlide }, { status: 200 });
+  } else if (role === 'logout') {
+    // Logout geral (limpa o apresentador)
+    presenter.id = null;
+    presenter.currentSlide = 0;
+    return NextResponse.json({ message: 'Logged out' }, { status: 200 });
   }
 
-  // Espectadores apenas consultam o estado
-  if (role === 'spectator') {
-    return NextResponse.json({ 
-      presenterId, 
-      currentSlide, 
-      hasPresenter: presenterId !== null 
-    });
-  }
-
-  return NextResponse.json({ error: 'Papel inválido ou ID do apresentador não corresponde' }, { status: 403 });
+  return NextResponse.json({ error: 'Invalid role' }, { status: 400 });
 }

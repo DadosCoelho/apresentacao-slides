@@ -26,29 +26,25 @@ const Navigation: React.FC<NavigationProps> = ({ totalSlides, currentSlide, onNa
     const fetchPresenterSlide = async () => {
       const response = await fetch('/api/presenter');
       const data = await response.json();
-      setPresenterSlide(data.currentSlide);
-      // Se for espectador e o slide atual for menor que o do apresentador, avança automaticamente
-      if (spectator && currentSlide < data.currentSlide) {
-        router.push(`/slide/${data.currentSlide}`);
+      if (presenter) {
+        setPresenterSlide(data.currentSlide);
       }
     };
 
-    fetchPresenterSlide(); // Chama imediatamente ao montar
+    fetchPresenterSlide();
 
-    // Polling a cada 2 segundos
     const interval = setInterval(() => {
       fetchPresenterSlide();
     }, 2000);
 
-    // Limpa o intervalo ao desmontar o componente
     return () => clearInterval(interval);
-  }, [currentSlide, router]);
+  }, [router]);
 
   const handleNavigate = (slide: number) => {
     if (isPresenter) {
-      onNavigate(slide); // Apresentador pode navegar livremente
+      onNavigate(slide);
     } else if (isSpectator && slide >= 0 && slide <= presenterSlide) {
-      router.push(`/slide/${slide}`); // Espectador só navega até o slide atual do apresentador
+      router.push(`/slide/${slide}`);
     }
   };
 

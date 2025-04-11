@@ -32,14 +32,13 @@ const Slide0: React.FC = () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ role: 'presenter' }),
     });
-    const { presenterId } = await response.json();
+    const { presenterId, currentSlide } = await response.json();
     if (response.ok) {
       localStorage.setItem('isPresenter', 'true');
       localStorage.setItem('isSpectator', 'false');
       localStorage.setItem('presenterId', presenterId);
-      localStorage.setItem('idSlidePresenter', '0');
       setHasPresenter(true);
-      router.push('/slide/1');
+      router.push(`/slide/${currentSlide || 1}`);
     }
   };
 
@@ -48,13 +47,14 @@ const Slide0: React.FC = () => {
     const { currentSlide } = await response.json();
     localStorage.setItem('isPresenter', 'false');
     localStorage.setItem('isSpectator', 'true');
-    localStorage.setItem('idSlidePresenter', currentSlide || '0');
     router.push(`/slide/${currentSlide || 1}`);
   };
 
   const handleExpelPresenter = async () => {
-    const response = await fetch('/api/presenter?action=expel', {
-      method: 'GET',
+    const response = await fetch('/api/presenter', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ role: 'presenter', presenterId: localStorage.getItem('presenterId') }),
     });
     if (response.ok) {
       localStorage.clear();

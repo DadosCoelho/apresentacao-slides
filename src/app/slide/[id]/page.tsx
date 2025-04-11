@@ -23,25 +23,37 @@ const SlidePage = () => {
 
   useEffect(() => {
     const fetchPresenterStatus = async () => {
-      const response = await fetch('/api/presenter');
-      const data = await response.json();
-      const localIsPresenter = localStorage.getItem('isPresenter') === 'true';
-      const localPresenterId = localStorage.getItem('presenterId');
-      const localIsSpectator = localStorage.getItem('isSpectator') === 'true';
-      setIsPresenter(localIsPresenter && localPresenterId === data.presenterId);
-      setIsSpectator(localIsSpectator);
-      setPresenterSlide(data.currentSlide);
-      setIsLoading(false);
+      try {
+        const response = await fetch('/api/presenter');
+        const data = await response.json();
+        const localIsPresenter = localStorage.getItem('isPresenter') === 'true';
+        const localPresenterId = localStorage.getItem('presenterId');
+        const localIsSpectator = localStorage.getItem('isSpectator') === 'true';
+
+        // Atualiza apenas permissões
+        setIsPresenter(localIsPresenter && localPresenterId === data.presenterId);
+        setIsSpectator(localIsSpectator);
+
+        // Só atualiza presenterSlide se for um apresentador
+        if (localIsPresenter && localPresenterId === data.presenterId) {
+          setPresenterSlide(data.currentSlide);
+        }
+
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Erro ao buscar status do apresentador:', error);
+        setIsLoading(false);
+      }
     };
 
-    fetchPresenterStatus(); // Chama ao montar
+    fetchPresenterStatus();
 
-    // Polling a cada 2 segundos apenas para atualizar o presenterSlide
+    // Polling apenas para permissões, se necessário
     const interval = setInterval(() => {
       fetchPresenterStatus();
     }, 2000);
 
-    return () => clearInterval(interval); // Limpa o intervalo ao desmontar
+    return () => clearInterval(interval);
   }, [router]);
 
   useEffect(() => {
@@ -49,12 +61,12 @@ const SlidePage = () => {
     if (!isPresenter && !isSpectator && slideId !== 0) {
       router.replace('/slide/0');
     } else if (isSpectator && slideId > presenterSlide) {
-      router.replace(`/slide/${presenterSlide}`); // Redireciona apenas se tentar ir além do permitido
+      router.replace(`/slide/${presenterSlide}`);
     }
   }, [isPresenter, isSpectator, slideId, presenterSlide, router, isLoading]);
 
   const handleNavigate = (slideNumber: number) => {
-    if (slideNumber >= 0 && slideNumber <= totalSlides) {
+    if (slideNumber >= 0 && slideNumber <= totalSlides && isPresenter) {
       fetch('/api/presenter', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

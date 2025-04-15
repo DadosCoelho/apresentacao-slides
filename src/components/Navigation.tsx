@@ -20,31 +20,21 @@ const Navigation: React.FC<NavigationProps> = ({ totalSlides, currentSlide, onNa
   useEffect(() => {
     const presenter = localStorage.getItem('isPresenter') === 'true';
     const spectator = localStorage.getItem('isSpectator') === 'true';
-    setIsPresenter(presenter);
-    setIsSpectator(spectator);
-
     const fetchPresenterSlide = async () => {
       const response = await fetch('/api/presenter');
       const data = await response.json();
-      if (presenter) {
-        setPresenterSlide(data.currentSlide);
-      }
+      setPresenterSlide(data.currentSlide);
     };
-
+    setIsPresenter(presenter);
+    setIsSpectator(spectator);
     fetchPresenterSlide();
-
-    const interval = setInterval(() => {
-      fetchPresenterSlide();
-    }, 2000);
-
-    return () => clearInterval(interval);
-  }, [router]);
+  }, []);
 
   const handleNavigate = (slide: number) => {
     if (isPresenter) {
-      onNavigate(slide);
+      onNavigate(slide); // Apresentador pode navegar livremente
     } else if (isSpectator && slide >= 0 && slide <= presenterSlide) {
-      router.push(`/slide/${slide}`);
+      router.push(`/slide/${slide}`); // Espectador só navega até o slide atual do apresentador
     }
   };
 

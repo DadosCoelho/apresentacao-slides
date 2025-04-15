@@ -23,38 +23,18 @@ const SlidePage = () => {
 
   useEffect(() => {
     const fetchPresenterStatus = async () => {
-      try {
-        const response = await fetch('/api/presenter');
-        const data = await response.json();
-        const localIsPresenter = localStorage.getItem('isPresenter') === 'true';
-        const localPresenterId = localStorage.getItem('presenterId');
-        const localIsSpectator = localStorage.getItem('isSpectator') === 'true';
-
-        // Atualiza apenas permissões
-        setIsPresenter(localIsPresenter && localPresenterId === data.presenterId);
-        setIsSpectator(localIsSpectator);
-
-        // Só atualiza presenterSlide se for um apresentador
-        if (localIsPresenter && localPresenterId === data.presenterId) {
-          setPresenterSlide(data.currentSlide);
-        }
-
-        setIsLoading(false);
-      } catch (error) {
-        console.error('Erro ao buscar status do apresentador:', error);
-        setIsLoading(false);
-      }
+      const response = await fetch('/api/presenter');
+      const data = await response.json();
+      const localIsPresenter = localStorage.getItem('isPresenter') === 'true';
+      const localPresenterId = localStorage.getItem('presenterId');
+      const localIsSpectator = localStorage.getItem('isSpectator') === 'true';
+      setIsPresenter(localIsPresenter && localPresenterId === data.presenterId);
+      setIsSpectator(localIsSpectator);
+      setPresenterSlide(data.currentSlide);
+      setIsLoading(false);
     };
-
     fetchPresenterStatus();
-
-    // Polling apenas para permissões, se necessário
-    const interval = setInterval(() => {
-      fetchPresenterStatus();
-    }, 2000);
-
-    return () => clearInterval(interval);
-  }, [router]);
+  }, []);
 
   useEffect(() => {
     if (isLoading) return;
@@ -66,7 +46,7 @@ const SlidePage = () => {
   }, [isPresenter, isSpectator, slideId, presenterSlide, router, isLoading]);
 
   const handleNavigate = (slideNumber: number) => {
-    if (slideNumber >= 0 && slideNumber <= totalSlides && isPresenter) {
+    if (slideNumber >= 0 && slideNumber <= totalSlides) {
       fetch('/api/presenter', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

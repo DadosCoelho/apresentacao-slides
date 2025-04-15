@@ -1,11 +1,11 @@
 // src/components/slides/Slide2/Slide2.tsx
 import React from 'react';
-import styles from './Slide3.module.css';
+import styles from './Slide5.module.css';
 
 const Slide2: React.FC = () => {
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Recursos Principais PAG.3</h1>
+      <h1 className={styles.title}>Recursos Principais PAG.5</h1>
       <div className={styles.content}>
         <div className={styles.grid}>
           <div className={styles.card}>

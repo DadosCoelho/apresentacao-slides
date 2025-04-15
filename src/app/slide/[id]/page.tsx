@@ -4,9 +4,13 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Slide0 from '../../../components/slides/Slide0/Slide0';
-import Slide1 from '@/components/slides/Slide1/Slide1';
-import Slide2 from '@/components/slides/Slide2/Slide2';
-import Slide3 from '@/components/slides/Slide3/Slide3';
+import Slide1 from '../../../components/slides/Slide1/Slide1';
+import Slide2 from '../../../components/slides/Slide2/Slide2';
+import Slide3 from '../../../components/slides/Slide3/Slide3';
+import Slide4 from '../../../components/slides/Slide4/Slide4';
+import Slide5 from '../../../components/slides/Slide5/Slide5';
+import Slide6 from '../../../components/slides/Slide6/Slide6';
+import Slide7 from '../../../components/slides/Slide7/Slide7';
 import Navigation from '@/components/Navigation';
 
 const SlidePage = () => {
@@ -76,6 +80,14 @@ const SlidePage = () => {
         return <Slide2 />;
       case 3:
         return <Slide3 />;
+      case 4:
+        return <Slide4 />;
+      case 5:
+        return <Slide5 />;
+      case 6:
+        return <Slide6 />;
+      case 7:
+        return <Slide7 />;
       default:
         return <Slide0 />;
     }

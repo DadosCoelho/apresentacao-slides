@@ -34,7 +34,7 @@ const SlidePage = () => {
           await import(`../../../components/slides/Slide${slideCount}/Slide${slideCount}`);
           slideCount++;
         }
-      } catch (error) {
+      } catch {
         setTotalSlides(slideCount);
       }
     };

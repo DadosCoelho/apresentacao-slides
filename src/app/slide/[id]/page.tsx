@@ -9,7 +9,7 @@ import Navigation from '@/components/Navigation';
 // Função para importar slides dinamicamente
 const loadSlide = (id: number) => {
   return dynamic(() => import(`../../../components/slides/Slide${id}/Slide${id}`), {
-    loading: () => <div>Carregando...</div>,
+    loading: () => <div></div>,
   });
 };
 
@@ -29,7 +29,6 @@ const SlidePage = () => {
     const fetchTotalSlides = async () => {
       let slideCount = 0;
       try {
-        // Tenta importar slides até encontrar um que não existe
         while (true) {
           await import(`../../../components/slides/Slide${slideCount}/Slide${slideCount}`);
           slideCount++;
@@ -41,6 +40,7 @@ const SlidePage = () => {
     fetchTotalSlides();
   }, []);
 
+  // Verificar status do apresentador e atualizar slide atual
   useEffect(() => {
     const fetchPresenterStatus = async () => {
       const response = await fetch('/api/presenter');
@@ -53,9 +53,27 @@ const SlidePage = () => {
       setPresenterSlide(data.currentSlide);
       setIsLoading(false);
     };
+
+    // Chama imediatamente ao montar o componente
     fetchPresenterStatus();
+
+    // Configura polling a cada 2 segundos
+    const interval = setInterval(() => {
+      fetch('/api/presenter')
+        .then((response) => response.json())
+        .then((data) => {
+          setPresenterSlide(data.currentSlide);
+        })
+        .catch((error) => {
+          console.error('Erro ao atualizar slide do apresentador:', error);
+        });
+    }, 2000);
+
+    // Limpa o intervalo ao desmontar o componente
+    return () => clearInterval(interval);
   }, []);
 
+  // Redirecionar espectador para o slide correto
   useEffect(() => {
     if (isLoading || totalSlides === 0) return;
     if (!isPresenter && !isSpectator && slideId !== 0) {

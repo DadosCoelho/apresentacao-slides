@@ -1,21 +1,33 @@
-// src/components/slides/Slide3/Slide3.tsx
+// src/components/slides/Slide7/Slide7.tsx
 import React from 'react';
 import styles from './Slide7.module.css';
 
-const Slide3: React.FC = () => {
+const Slide7: React.FC = () => {
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Contato & Dúvidas</h1>
+      <h1 className={styles.title}>Recursos Principais PAG.7</h1>
       <div className={styles.content}>
-        <p className={styles.thanksText}>Obrigado pela atenção!</p>
-        <div className={styles.contactInfo}>
-          <p className={styles.contactItem}>✉️ email@exemplo.com</p>
-          <p className={styles.contactItem}>🌐 www.seusite.com</p>
-          <p className={styles.contactItem}>📱 (00) 12345-6789</p>
+        <div className={styles.grid}>
+          <div className={styles.card}>
+            <h3 className={styles.cardTitle}>Responsivo</h3>
+            <p className={styles.cardText}>Adaptável a qualquer tamanho de tela</p>
+          </div>
+          <div className={styles.card}>
+            <h3 className={styles.cardTitle}>Rápido</h3>
+            <p className={styles.cardText}>Carregamento instantâneo entre slides</p>
+          </div>
+          <div className={styles.card}>
+            <h3 className={styles.cardTitle}>Personalizável</h3>
+            <p className={styles.cardText}>Fácil de modificar e estilizar</p>
+          </div>
+          <div className={styles.card}>
+            <h3 className={styles.cardTitle}>Interativo</h3>
+            <p className={styles.cardText}>Adicione elementos interativos</p>
+          </div>
         </div>
       </div>
     </div>
   );
 };
 
-export default Slide3;
+export default Slide7;

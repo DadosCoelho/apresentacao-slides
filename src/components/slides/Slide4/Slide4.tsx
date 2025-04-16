@@ -1,8 +1,8 @@
-// src/components/slides/Slide2/Slide2.tsx
+// src/components/slides/Slide4/Slide4.tsx
 import React from 'react';
 import styles from './Slide4.module.css';
 
-const Slide2: React.FC = () => {
+const Slide4: React.FC = () => {
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>Recursos Principais PAG.4</h1>
@@ -30,4 +30,4 @@ const Slide2: React.FC = () => {
   );
 };
 
-export default Slide2;
+export default Slide4;

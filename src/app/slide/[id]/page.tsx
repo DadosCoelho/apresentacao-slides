@@ -3,15 +3,15 @@
 
 import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import Slide0 from '../../../components/slides/Slide0/Slide0';
-import Slide1 from '../../../components/slides/Slide1/Slide1';
-import Slide2 from '../../../components/slides/Slide2/Slide2';
-import Slide3 from '../../../components/slides/Slide3/Slide3';
-import Slide4 from '../../../components/slides/Slide4/Slide4';
-import Slide5 from '../../../components/slides/Slide5/Slide5';
-import Slide6 from '../../../components/slides/Slide6/Slide6';
-import Slide7 from '../../../components/slides/Slide7/Slide7';
+import dynamic from 'next/dynamic';
 import Navigation from '@/components/Navigation';
+
+// Função para importar slides dinamicamente
+const loadSlide = (id: number) => {
+  return dynamic(() => import(`../../../components/slides/Slide${id}/Slide${id}`), {
+    loading: () => <div>Carregando...</div>,
+  });
+};
 
 const SlidePage = () => {
   const params = useParams();
@@ -22,8 +22,24 @@ const SlidePage = () => {
   const [isSpectator, setIsSpectator] = useState(false);
   const [presenterSlide, setPresenterSlide] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [totalSlides, setTotalSlides] = useState(0);
 
-  const totalSlides = 7;
+  // Determinar o número total de slides dinamicamente
+  useEffect(() => {
+    const fetchTotalSlides = async () => {
+      let slideCount = 0;
+      try {
+        // Tenta importar slides até encontrar um que não existe
+        while (true) {
+          await import(`../../../components/slides/Slide${slideCount}/Slide${slideCount}`);
+          slideCount++;
+        }
+      } catch (error) {
+        setTotalSlides(slideCount);
+      }
+    };
+    fetchTotalSlides();
+  }, []);
 
   useEffect(() => {
     const fetchPresenterStatus = async () => {
@@ -41,16 +57,18 @@ const SlidePage = () => {
   }, []);
 
   useEffect(() => {
-    if (isLoading) return;
+    if (isLoading || totalSlides === 0) return;
     if (!isPresenter && !isSpectator && slideId !== 0) {
       router.replace('/slide/0');
     } else if (isSpectator && slideId > presenterSlide) {
       router.replace(`/slide/${presenterSlide}`);
+    } else if (slideId >= totalSlides) {
+      router.replace(`/slide/${totalSlides - 1}`);
     }
-  }, [isPresenter, isSpectator, slideId, presenterSlide, router, isLoading]);
+  }, [isPresenter, isSpectator, slideId, presenterSlide, router, isLoading, totalSlides]);
 
   const handleNavigate = (slideNumber: number) => {
-    if (slideNumber >= 0 && slideNumber <= totalSlides) {
+    if (slideNumber >= 0 && slideNumber < totalSlides) {
       fetch('/api/presenter', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -66,37 +84,18 @@ const SlidePage = () => {
     }
   };
 
-  if (isLoading) return null;
+  if (isLoading || totalSlides === 0) return <div>Carregando...</div>;
   if (!isPresenter && !isSpectator && slideId !== 0) return null;
   if (isSpectator && slideId > presenterSlide) return null;
+  if (slideId >= totalSlides) return null;
 
-  const renderSlide = () => {
-    switch (slideId) {
-      case 0:
-        return <Slide0 />;
-      case 1:
-        return <Slide1 />;
-      case 2:
-        return <Slide2 />;
-      case 3:
-        return <Slide3 />;
-      case 4:
-        return <Slide4 />;
-      case 5:
-        return <Slide5 />;
-      case 6:
-        return <Slide6 />;
-      case 7:
-        return <Slide7 />;
-      default:
-        return <Slide0 />;
-    }
-  };
+  // Carrega o componente do slide dinamicamente
+  const SlideComponent = loadSlide(slideId);
 
   return (
     <div className="relative">
-      {renderSlide()}
-      <Navigation totalSlides={totalSlides} currentSlide={slideId} onNavigate={handleNavigate} />
+      <SlideComponent />
+      <Navigation totalSlides={totalSlides - 1} currentSlide={slideId} onNavigate={handleNavigate} />
     </div>
   );
 };

@@ -1,11 +1,11 @@
-// src/components/slides/Slide5/Slide5.tsx
+// src/components/slides/Slide8/Slide8.tsx
 import React from 'react';
-import styles from './Slide5.module.css';
+import styles from './Slide8.module.css';
 
-const Slide5: React.FC = () => {
+const Slide8: React.FC = () => {
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Recursos Principais PAG.5</h1>
+      <h1 className={styles.title}>Recursos Principais PAG.6</h1>
       <div className={styles.content}>
         <div className={styles.grid}>
           <div className={styles.card}>
@@ -30,4 +30,4 @@ const Slide5: React.FC = () => {
   );
 };
 
-export default Slide5;
+export default Slide8;

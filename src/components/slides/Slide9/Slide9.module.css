@@ -1,10 +1,10 @@
-/* src/components/slides/Slide6/Slide6.module.css */
+/* src/components/slides/Slide9/Slide9.module.css */
 .container {
   display: flex;
   flex-direction: column;
   width: 100%;
   min-height: 100vh;
-  background-color: rgb(4, 120, 87);
+  background-color: rgb(107, 33, 168);
   color: white;
   padding: 2rem;
 }
@@ -32,6 +32,10 @@
 
 .content {
   font-size: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 @media (min-width: 768px) {
@@ -40,53 +44,35 @@
   }
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1rem;
-  width: 100%;
+.thanksText {
+  font-size: 1.75rem;
+  font-weight: 300;
 }
 
 @media (min-width: 768px) {
-  .grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 2rem;
-  }
-}
-
-.card {
-  background-color: rgba(255, 255, 255, 0.2);
-  padding: 1.5rem;
-  border-radius: 0.5rem;
-  margin-bottom: 1rem;
-}
-
-@media (min-width: 768px) {
-  .card {
-    padding: 2rem;
-    margin-bottom: 0;
-  }
-}
-
-.cardTitle {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-  color: black;
-}
-
-.cardText {
-  font-size: 1.125rem;
-  color: black;
-}
-
-@media (min-width: 768px) {
-  .cardTitle {
+  .thanksText {
     font-size: 2.25rem;
-    margin-bottom: 1rem;
   }
-  
-  .cardText {
-    font-size: 1.5rem;
+}
+
+.contactInfo {
+  font-size: 1.25rem;
+  margin-top: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .contactInfo {
+    font-size: 1.875rem;
+    margin-top: 2rem;
+  }
+}
+
+.contactItem {
+  margin-bottom: 0.75rem;
+}
+
+@media (min-width: 768px) {
+  .contactItem {
+    margin-bottom: 1rem;
   }
 }

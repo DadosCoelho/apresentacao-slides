@@ -23,7 +23,7 @@ const SlidePage = () => {
   const [presenterSlide, setPresenterSlide] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
-  const totalSlides = 3;
+  const totalSlides = 7;
 
   useEffect(() => {
     const fetchPresenterStatus = async () => {

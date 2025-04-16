@@ -21,6 +21,7 @@ const SlidePage = () => {
   const [isPresenter, setIsPresenter] = useState(false);
   const [isSpectator, setIsSpectator] = useState(false);
   const [presenterSlide, setPresenterSlide] = useState(0);
+  const [hasPresenter, setHasPresenter] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [totalSlides, setTotalSlides] = useState(0);
 
@@ -40,38 +41,43 @@ const SlidePage = () => {
     fetchTotalSlides();
   }, []);
 
-  // Verificar status do apresentador e atualizar slide atual
+  // Polling para atualizar estado do apresentador e slide atual
   useEffect(() => {
-    const fetchPresenterStatus = async () => {
-      const response = await fetch('/api/presenter');
-      const data = await response.json();
-      const localIsPresenter = localStorage.getItem('isPresenter') === 'true';
-      const localPresenterId = localStorage.getItem('presenterId');
-      const localIsSpectator = localStorage.getItem('isSpectator') === 'true';
-      setIsPresenter(localIsPresenter && localPresenterId === data.presenterId);
-      setIsSpectator(localIsSpectator);
-      setPresenterSlide(data.currentSlide);
-      setIsLoading(false);
+    const updatePresenterStatus = async () => {
+      try {
+        const response = await fetch('/api/presenter');
+        const data = await response.json();
+        const localIsPresenter = localStorage.getItem('isPresenter') === 'true';
+        const localPresenterId = localStorage.getItem('presenterId');
+        const localIsSpectator = localStorage.getItem('isSpectator') === 'true';
+
+        setIsPresenter(localIsPresenter && localPresenterId === data.presenterId);
+        setIsSpectator(localIsSpectator);
+        setPresenterSlide(data.currentSlide);
+        setHasPresenter(data.hasPresenter);
+
+        if (!data.hasPresenter && localIsSpectator) {
+          // Se não há apresentador, redireciona espectador para slide 0
+          localStorage.clear();
+          setIsSpectator(false);
+          router.replace('/slide/0');
+        }
+
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Erro ao buscar status do apresentador:', error);
+      }
     };
 
     // Chama imediatamente ao montar o componente
-    fetchPresenterStatus();
+    updatePresenterStatus();
 
     // Configura polling a cada 2 segundos
-    const interval = setInterval(() => {
-      fetch('/api/presenter')
-        .then((response) => response.json())
-        .then((data) => {
-          setPresenterSlide(data.currentSlide);
-        })
-        .catch((error) => {
-          console.error('Erro ao atualizar slide do apresentador:', error);
-        });
-    }, 2000);
+    const interval = setInterval(updatePresenterStatus, 2000);
 
     // Limpa o intervalo ao desmontar o componente
     return () => clearInterval(interval);
-  }, []);
+  }, [router]);
 
   // Redirecionar espectador para o slide correto
   useEffect(() => {
